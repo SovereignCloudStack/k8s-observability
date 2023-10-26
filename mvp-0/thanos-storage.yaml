@@ -1,0 +1,8 @@
+thanosStorage:
+  config: |-
+   type: S3
+   config:
+     endpoint: "<url-of-the-S3-endpoint>"
+     bucket: "<observer-bucket-name>"
+     access_key: "<access-key>"
+     secret_key: "<secret-key>"
