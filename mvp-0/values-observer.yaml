@@ -1,0 +1,81 @@
+thanosStorage:
+  secret:
+    name: thanos-objstore-config
+    key: objstore.yml
+  config: ""
+
+thanos:
+  fullnameOverride: thanos
+  existingObjstoreSecret: thanos-objstore-config
+  storegateway:
+    enabled: true
+  query:
+    replicaLabel: [agent_replica, sidecar_replica]
+    stores:
+    - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
+  receive:
+    enabled: true
+    replicaCount: 1
+    replicaLabel: receive_replica
+    service:
+      type: NodePort
+      nodePorts:
+        remote: 30291
+
+grafanaDatasourcesAsConfigMap:
+  cluster-metrics:
+    - name: thanos
+      isDefault: true
+      type: prometheus
+      access: proxy
+      url: http://thanos-query:9090
+  cluster-logs: null
+loki:
+  enabled: false
+promtail:
+  enabled: false
+
+kube-prometheus-stack:
+  kubeScheduler:
+    serviceMonitor:
+      insecureSkipVerify: true
+  kubeControllerManager:
+    serviceMonitor:
+     insecureSkipVerify: true
+  grafana:
+    service:
+      type: NodePort
+      nodePort: 30000
+  prometheus:
+    prometheusSpec:
+      replicas: 2
+      replicaExternalLabelName: sidecar_replica
+      externalLabels:
+        cluster: observer-cluster
+      thanos:
+        objectStorageConfig:
+          name: thanos-objstore-config
+          key: objstore.yml
+  defaultRules:
+    labels:
+      prometheus_rule: '2'
+  nameOverride: kube-prometheus
+  thanosRuler:
+    enabled: true
+    service:
+      additionalPorts:
+      - name: grpc
+        port: 10901
+        protocol: TCP
+        targetPort: 10901
+    thanosRulerSpec:
+      objectStorageConfig:
+        name: thanos-objstore-config
+        key: objstore.yml
+      ruleSelector:
+        matchLabels:
+          prometheus_rule: '2'
+      queryEndpoints:
+      - dnssrv+_http._tcp.thanos-query
+      alertmanagersUrl:
+      - http://kube-prometheus-alertmanager:9093

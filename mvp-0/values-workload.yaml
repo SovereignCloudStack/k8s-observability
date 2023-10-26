@@ -1,0 +1,25 @@
+prometheus:
+  agentMode: true
+  prometheusSpec:
+    replicas: 2
+    replicaExternalLabelName: "agent_replica"
+    externalLabels:
+      cluster: "workload-cluster"
+    remoteWrite:
+    - name: "workload-cluster-remote-write"
+      url: http://<ip-of-node>:30291/api/v1/receive
+
+alertmanager:
+  enabled: false
+grafana:
+  enabled: false
+defaultRules:
+  create: false
+
+kubeScheduler:
+  serviceMonitor:
+    insecureSkipVerify: true
+
+kubeControllerManager:
+  serviceMonitor:
+   insecureSkipVerify: true
