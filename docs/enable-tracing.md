@@ -20,4 +20,4 @@ thanos:
 
 ## Usage
 Once tracing is enabled, Thanos will generate traces for all gRPC and HTTP APIs thanks to generic “middlewares”. Some more interesting to observe APIs like query or query_range have more low-level spans with focused metadata showing latency for important functionalities. For example, Jaeger view of  query_range HTTP API call might look as follows:
-![Jaeger-example](jaeger.png)
+![Jaeger-example](./images/jaeger.png)
