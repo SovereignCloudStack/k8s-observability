@@ -9,6 +9,12 @@ prometheus:
     - name: "workload-cluster-remote-write"
       url: http://<ip-of-node>:30291/api/v1/receive
 
+## See https://github.com/dNationCloud/kubernetes-monitoring-stack/blob/main/chart/values.yaml#L258
+prometheus-node-exporter:
+  extraArgs:
+  - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
+  - --collector.filesystem.ignored-fs-types=^(rootfs|squashfs|nsfs|autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
+
 alertmanager:
   enabled: false
 grafana:
