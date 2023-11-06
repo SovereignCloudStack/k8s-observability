@@ -1,4 +1,7 @@
 thanosStorage:
+  secret:
+    name: thanos-objstore-config
+    key: objstore.yml
   config: |-
    type: S3
    config:
@@ -6,3 +9,29 @@ thanosStorage:
      bucket: "<observer-bucket-name>"
      access_key: "<access-key>"
      secret_key: "<secret-key>"
+
+thanos:
+  existingObjstoreSecret: thanos-objstore-config
+  storegateway:
+    enabled: true
+  compactor:
+    enabled: true
+    retentionResolutionRaw: 2d
+    retentionResolution5m: 10d
+    retentionResolution1h: 15d
+    extraFlags:
+    - --compact.concurrency=3
+    - --downsample.concurrency=3    
+
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      thanos:
+        objectStorageConfig:
+          name: thanos-objstore-config
+          key: objstore.yml
+  thanosRuler:
+    thanosRulerSpec:
+      objectStorageConfig:
+        name: thanos-objstore-config
+        key: objstore.yml

@@ -1,0 +1,46 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kaas-clusters
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kaas-metric-importer
+  labels:
+    app: kaas-metric-importer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kaas-metric-importer
+  template:
+    metadata:
+      labels:
+        app: kaas-metric-importer
+    spec:
+      containers:
+      - name: kaas-metric-importer
+        # https://github.com/m3dbx/prometheus_remote_client_golang/blob/master/Dockerfile
+        image: registry.dnation.cloud/library/promremote
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          while true
+          do
+            for FILE in $(find -L /clusters -maxdepth 1 -type f)
+            do
+              promremotecli -u http://thanos-receive:19291/api/v1/receive -t=__name__:kaas -t=cluster:$(basename $FILE) -d=now,1
+            done
+            sleep 10
+          done
+        volumeMounts:
+        - name: clusters
+          mountPath: "/clusters"
+          readOnly: true
+      volumes:
+      - name: clusters
+        configMap:
+          name: kaas-clusters

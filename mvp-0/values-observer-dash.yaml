@@ -1,5 +1,6 @@
 grafanaDashboards:
   isLoki: false
 prometheusRules:
+  enable: false
   labelPrometheus:
     prometheus_rule: '2'

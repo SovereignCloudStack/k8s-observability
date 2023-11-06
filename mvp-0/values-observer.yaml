@@ -1,15 +1,20 @@
-thanosStorage:
-  secret:
-    name: thanos-objstore-config
-    key: objstore.yml
-  config: ""
-
 thanos:
   fullnameOverride: thanos
-  existingObjstoreSecret: thanos-objstore-config
-  storegateway:
+  queryFrontend:
     enabled: true
+    extraFlags:
+    - --query-range.split-interval=12h 
+    - --query-frontend.log-queries-longer-than=10s
+    - --query-frontend.compress-responses
+    - |-
+      --query-range.response-cache-config="config":
+        "max_size": "500MB"
+        "max_size_items": 0
+        "validity": 0s
+      "type": "in-memory"
   query:
+    extraFlags:
+    - --query.auto-downsampling
     replicaLabel: [agent_replica, sidecar_replica]
     stores:
     - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
@@ -24,11 +29,11 @@ thanos:
 
 grafanaDatasourcesAsConfigMap:
   cluster-metrics:
-    - name: thanos
-      isDefault: true
-      type: prometheus
-      access: proxy
-      url: http://thanos-query:9090
+  - name: thanos
+    isDefault: true
+    type: prometheus
+    access: proxy
+    url: http://thanos-query-frontend:9090
   cluster-logs: null
 loki:
   enabled: false
@@ -52,13 +57,30 @@ kube-prometheus-stack:
       replicaExternalLabelName: sidecar_replica
       externalLabels:
         cluster: observer-cluster
-      thanos:
-        objectStorageConfig:
-          name: thanos-objstore-config
-          key: objstore.yml
   defaultRules:
+    create: false
     labels:
       prometheus_rule: '2'
+  additionalPrometheusRulesMap:
+    dnation-kubernetes-monitoring-rules:
+      additionalLabels:
+        prometheus_rule: '2'
+      groups:
+      - name: k8s.rules
+        rules:
+        - alert: KubernetesMonitoringClusterDown
+          expr: 'kaas unless on(cluster) up'
+          for: 5m
+          labels:
+            alertgroup: Cluster
+            severity: critical
+          annotations:
+            message: 'Cluster {{ $labels.cluster }} is down.'
+        # add recording rules manually as prometheusRules are disabled in values-observer-dash.yaml
+        - record: 'master_uname_info'
+          expr: 'node_uname_info{job=~"node-exporter"} and on(nodename) label_replace(kube_node_role{role=~"control-plane"}, "nodename", "$1", "node", "(.+)")'
+        - record: 'worker_uname_info'
+          expr: 'node_uname_info{job=~"node-exporter"} unless on(nodename) label_replace(kube_node_role{role=~"control-plane"}, "nodename", "$1", "node", "(.+)")'
   nameOverride: kube-prometheus
   thanosRuler:
     enabled: true
@@ -69,9 +91,6 @@ kube-prometheus-stack:
         protocol: TCP
         targetPort: 10901
     thanosRulerSpec:
-      objectStorageConfig:
-        name: thanos-objstore-config
-        key: objstore.yml
       ruleSelector:
         matchLabels:
           prometheus_rule: '2'
