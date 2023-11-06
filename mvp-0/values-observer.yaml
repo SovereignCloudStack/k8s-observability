@@ -1,6 +1,20 @@
 thanos:
   fullnameOverride: thanos
+  queryFrontend:
+    enabled: true
+    extraFlags:
+    - --query-range.split-interval=12h 
+    - --query-frontend.log-queries-longer-than=10s
+    - --query-frontend.compress-responses
+    - |-
+      --query-range.response-cache-config="config":
+        "max_size": "500MB"
+        "max_size_items": 0
+        "validity": 0s
+      "type": "in-memory"
   query:
+    extraFlags:
+    - --query.auto-downsampling
     replicaLabel: [agent_replica, sidecar_replica]
     stores:
     - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
@@ -19,7 +33,7 @@ grafanaDatasourcesAsConfigMap:
     isDefault: true
     type: prometheus
     access: proxy
-    url: http://thanos-query:9090
+    url: http://thanos-query-frontend:9090
   cluster-logs: null
 loki:
   enabled: false
