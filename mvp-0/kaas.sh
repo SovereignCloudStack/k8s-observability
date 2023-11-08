@@ -17,6 +17,7 @@ fi
 if [[ -z "$3" ]] || ! [[ -f $3 ]] ; then
   echo "ERROR: Need to provide observer kubeconfig" >&2; exit 1
 fi
+export OBSERVER_KUBECONFIG=$3
 
 KAAS_NO=($(seq 1 1 "$2"))
 
@@ -25,14 +26,14 @@ kaas_create() {
   echo "KaaS workload cluster kaas-$1 created"
   helm --kube-context kind-kaas-"$1" upgrade --install monitoring prometheus-community/kube-prometheus-stack -f values-workload.yaml --set prometheus.prometheusSpec.externalLabels.cluster=kaas-"$1"
   echo "KaaS workload cluster kaas-$1 bootstrapped with monitoring"
-  kubectl --kubeconfig "$3" patch cm kaas-clusters -p '{"data":{"'"kaas-$1"'":""}}'
+  kubectl --kubeconfig "$OBSERVER_KUBECONFIG" patch cm kaas-clusters -p '{"data":{"'"kaas-$1"'":""}}'
   echo "KaaS prometheus metric of workload cluster kaas-$1 imported"
 }
 
 kaas_delete() {
   kind delete cluster --name kaas-"$1"
   echo "KaaS workload cluster kaas-$1 deleted"
-  kubectl --kubeconfig "$3" patch cm kaas-clusters -p '{"data":{"'"kaas-$1"'":null}}'
+  kubectl --kubeconfig "$OBSERVER_KUBECONFIG" patch cm kaas-clusters -p '{"data":{"'"kaas-$1"'":null}}'
   echo "KaaS prometheus metric of workload cluster kaas-$1 removed"
 }
 
