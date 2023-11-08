@@ -1,0 +1,26 @@
+serviceMonitor:
+  enabled: true
+  # Default values that will be used for all ServiceMonitors created by `targets`
+  defaults:
+    labels:
+      release: dnation-kubernetes-monitoring-stack
+
+  targets:
+  - name: dnation-registry
+    url: https://registry.dnation.cloud
+  - name: dnation-cloud
+    url: https://dnation.cloud
+  - name: scs-registry
+    url: https://registry.scs.community/account/sign-in
+  - name: scs-conf
+    url: https://conf.scs.koeln:8443/
+  - name: scs-community-hedgedoc
+    url: https://input.scs.community/
+  - name: scs-nextcloud
+    url: https://scs.sovereignit.de/nextcloud/login
+  - name: scs-web
+    url: https://scs.community/
+  - name: scs-docs
+    url: https://docs.scs.community/
+  - name: scs-zuul
+    url: https://zuul.scs.community

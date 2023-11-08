@@ -50,6 +50,14 @@ It pushes metric `kaas{cluster="workload-cluster"} 1`.
    ```bash
    kubectl apply -f kaas-metric-importer.yaml
    ```
+#### Deploy Blackbox exporter
+If you want to monitor the availability and performance of external services or endpoints by probing them using protocols such as HTTP, HTTPS, ICMP, DNS, TCP you can install `blackbox exporter` via helm chart:
+
+```bash
+helm upgrade --install black-box prometheus-community/prometheus-blackbox-exporter \
+-f values-blackbox.yml # example of blackbox values
+```
+If you want a nice dashboard for monitoring `HTTP` and `HTTPS` endpoints, you can import into Grafana this [dashboard](https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/).
 
 ### Workload cluster
 
