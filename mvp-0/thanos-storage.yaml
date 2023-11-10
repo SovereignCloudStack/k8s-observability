@@ -12,6 +12,8 @@ thanosStorage:
 
 thanos:
   existingObjstoreSecret: thanos-objstore-config
+  bucketweb:
+    enabled: true
   storegateway:
     enabled: true
   compactor:
