@@ -71,7 +71,6 @@ kube-prometheus-stack:
         rules:
         - alert: KubernetesMonitoringClusterDown
           expr: 'kaas unless on(cluster) up'
-          for: 5m
           labels:
             alertgroup: Cluster
             severity: critical
