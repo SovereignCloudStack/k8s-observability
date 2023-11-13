@@ -3,7 +3,7 @@ thanos:
   queryFrontend:
     enabled: true
     extraFlags:
-    - --query-range.split-interval=12h 
+    - --query-range.split-interval=12h
     - --query-frontend.log-queries-longer-than=10s
     - --query-frontend.compress-responses
     - |-
