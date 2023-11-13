@@ -59,7 +59,6 @@ kube-prometheus-stack:
       externalLabels:
         cluster: observer-cluster
   defaultRules:
-    create: false
     labels:
       prometheus_rule: '2'
   additionalPrometheusRulesMap:
