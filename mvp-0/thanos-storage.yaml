@@ -23,17 +23,19 @@ thanos:
     retentionResolution1h: 15d
     extraFlags:
     - --compact.concurrency=3
-    - --downsample.concurrency=3    
+    - --downsample.concurrency=3
 
 kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       thanos:
         objectStorageConfig:
-          name: thanos-objstore-config
-          key: objstore.yml
+          existingSecret:
+            name: thanos-objstore-config
+            key: objstore.yml
   thanosRuler:
     thanosRulerSpec:
       objectStorageConfig:
-        name: thanos-objstore-config
-        key: objstore.yml
+        existingSecret:
+          name: thanos-objstore-config
+          key: objstore.yml
