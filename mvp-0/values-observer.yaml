@@ -27,6 +27,7 @@ thanos:
       type: NodePort
       nodePorts:
         remote: 30291
+    tsdbRetention: 1d
 
 grafanaDatasourcesAsConfigMap:
   cluster-metrics:
