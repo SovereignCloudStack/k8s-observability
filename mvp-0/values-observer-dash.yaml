@@ -1,6 +1,20 @@
 grafanaDashboards:
   isLoki: false
 prometheusRules:
-  enable: false
   labelPrometheus:
     prometheus_rule: '2'
+
+clusterMonitoring:
+  clusters:
+  - name: Observer
+    label: observer-cluster
+    description: 'Observer cluster monitoring'
+
+kaasMonitoring:
+  enabled: true
+
+blackboxMonitoring:
+  enabled: true
+
+testbedMonitoring:
+  enabled: true
