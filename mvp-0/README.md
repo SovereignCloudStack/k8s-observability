@@ -57,7 +57,10 @@ If you want to monitor the availability and performance of external services or 
 helm upgrade --install black-box prometheus-community/prometheus-blackbox-exporter \
 -f values-blackbox.yml # example of blackbox values
 ```
-If you want a nice dashboard for monitoring `HTTP` and `HTTPS` endpoints, you can import into Grafana this [dashboard](https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/).
+If you want a nice dashboard for monitoring `HTTP` and `HTTPS` endpoints, just apply `blackbox-dashboard.yaml` manifest into your k8s cluster like this:
+```bash
+kubectl apply -f blackbox-dashboard.yaml
+```
 
 ### Workload cluster
 
