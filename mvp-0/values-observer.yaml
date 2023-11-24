@@ -15,6 +15,7 @@ thanos:
   query:
     extraFlags:
     - --query.auto-downsampling
+    - --query.lookback-delta=1m
     replicaLabel: [agent_replica, sidecar_replica]
     stores:
     - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
