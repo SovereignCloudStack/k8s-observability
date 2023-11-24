@@ -20,7 +20,6 @@ thanos:
     replicaLabel: [agent_replica, sidecar_replica, prometheus_replica]
     stores:
     - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
-    - 213.131.230.153:10901
   receive:
     enabled: true
     replicaCount: 1
@@ -79,6 +78,10 @@ kube-prometheus-stack:
           annotations:
             message: 'Cluster {{ $labels.cluster }} is down.'
   nameOverride: kube-prometheus
+  alertmanager:
+    service:
+      type: NodePort
+      nodePort: 30001
   thanosRuler:
     enabled: true
     service:

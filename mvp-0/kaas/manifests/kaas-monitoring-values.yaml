@@ -7,7 +7,7 @@ prometheus:
       cluster: "workload-cluster"
     remoteWrite:
     - name: "workload-cluster-remote-write"
-      url: http://<ip-of-node>:30291/api/v1/receive
+      url: "http://<ip-of-node>:30291/api/v1/receive"
 
 ## See https://github.com/dNationCloud/kubernetes-monitoring-stack/blob/main/chart/values.yaml#L264
 prometheus-node-exporter:
