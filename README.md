@@ -19,9 +19,9 @@ implements three use cases:
 - Monitoring of infrastructure services (such as CSP services deployed on top of the IaaS layer)
 
 _The monitoring stack employed for observing the KaaS layer and infrastructure services
-is designed to serve as an **SCS product** in the future versions, once it attains sufficient stability.
+is designed to serve as an **SCS product** in the future versions, once it attains sufficient stability._
 
-TODO: insert a high leve; arch. diagram here
+![high_level_arch](./docs/images/monitoring_hybrid_mvp0.png)
 
 # Deployment
 
