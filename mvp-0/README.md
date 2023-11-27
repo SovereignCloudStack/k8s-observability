@@ -59,7 +59,7 @@ helm upgrade --install black-box prometheus-community/prometheus-blackbox-export
 ```
 If you want a nice dashboard for monitoring `HTTP` and `HTTPS` endpoints, just apply `blackbox-dashboard.yaml` manifest into your k8s cluster like this:
 ```bash
-kubectl apply -f blackbox-dashboard.yaml
+kubectl apply -f dashboards/blackbox-dashboard.yaml
 ```
 
 ### Workload cluster
