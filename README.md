@@ -63,6 +63,12 @@ _Optional_: Configure the object store as a long-term storage for metrics. Fill 
 `thanos-objstore.yaml` template manifest with the bucket credentials (refer to `thanosStorage.config`).
 
 ```bash
+# Apply SCS brand customization
+kubectl apply -f scs/logo.yaml
+kubectl apply -f scs/brand.yaml
+```
+
+```bash
 helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
 helm repo update dnationcloud
 helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack \
