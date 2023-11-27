@@ -28,4 +28,4 @@ kubeScheduler:
 
 kubeControllerManager:
   serviceMonitor:
-   insecureSkipVerify: true
+    insecureSkipVerify: true
