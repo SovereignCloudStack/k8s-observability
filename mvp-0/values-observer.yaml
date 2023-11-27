@@ -13,10 +13,11 @@ thanos:
         "validity": 0s
       "type": "in-memory"
   query:
+    replicaCount: 2
     extraFlags:
     - --query.auto-downsampling
     - --query.lookback-delta=1m
-    replicaLabel: [agent_replica, sidecar_replica]
+    replicaLabel: [agent_replica, sidecar_replica, prometheus_replica]
     stores:
     - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
     - 213.131.230.153:10901
@@ -87,6 +88,7 @@ kube-prometheus-stack:
         protocol: TCP
         targetPort: 10901
     thanosRulerSpec:
+      evaluationInterval: "1m"
       ruleSelector:
         matchLabels:
           prometheus_rule: '2'

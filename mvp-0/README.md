@@ -6,7 +6,7 @@
 
 #### Deploy dnation-kubernetes-monitoring-stack without dnation-kubernetes-monitoring
 
-1. Optional: Fill `thanos-storage.yaml` with bucket credentials in **thanosStorage config**
+1. Optional: Fill `thanos-objstore.yaml` with bucket credentials in **thanosStorage config**
 2. Deploy
    ```bash
    helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
@@ -14,7 +14,7 @@
    helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack \
      --set dnation-kubernetes-monitoring.enabled=false \
      -f values-observer.yaml \
-     -f thanos-storage.yaml # Optional
+     -f thanos-objstore.yaml # Optional
    ```
 
 #### Deploy dnation-kubernetes-monitoring
@@ -114,4 +114,47 @@ helm --kube-context kind-workload upgrade --install monitoring prometheus-commun
   -f values-workload.yaml
 
 kubectl --context kind-observer patch cm kaas-clusters -p '{"data":{"workload-cluster":""}}'
+```
+
+## SCS Registry monitoring
+
+### Deploy SCS Registry - workload cluster
+
+1. Create necessary issuers and certificates inside the **observer** cluster:
+   ```bash
+   kubectl apply -f scs-registry-monitoring/observer/mtls/
+   ```
+2. Copy created `query-harbor.dnation.cloud` secret to the [scs-registry-monitoring/workload/server-secret.yaml](scs-registry-monitoring/workload/server-secret.yaml)
+   and apply to the **workload** cluster:
+   ```bash
+   kubectl apply -f scs-registry-monitoring/workload/server-secret.yaml
+   ```
+3. Deploy *dnation-kubernetes-monitoring-stack* to the **workload** cluster:
+   - Optional: Fill `scs-registry-monitoring/workload/thanos-objstore.yaml` with bucket credentials in **thanosStorage config**
+   - Deploy
+   ```bash
+   helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack \
+     -f scs-registry-monitoring/workload/values-workload.yaml \
+     -f scs-registry-monitoring/workload/thanos-objstore.yaml # Optional
+   ```
+
+### Deploy SCS Registry - observer cluster
+
+#### Upgrade dnation-kubernetes-monitoring-stack with additional SCS Registry values
+
+```bash
+helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack \
+  --set dnation-kubernetes-monitoring.enabled=false \
+  -f values-observer.yaml \
+  -f scs-registry-monitoring/observer/values-observer.yaml \
+  -f thanos-objstore.yaml # Optional
+```
+
+#### Upgrade dnation-kubernetes-monitoring with additional SCS Registry values
+
+```bash
+helm upgrade --install dnation-kubernetes-monitoring kubernetes-monitoring/chart \
+  --set releaseOverride=dnation-kubernetes-monitoring-stack \
+  -f values-observer-dash.yaml \
+  -f scs-registry-monitoring/observer/values-observer-dash.yaml
 ```

@@ -1,0 +1,55 @@
+  query:
+    stores:
+    - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
+    - 213.131.230.77:10901
+    - dnssrv+_http-harbor-cluster._tcp.thanos-query-envoy
+    sidecars:
+    - name: envoy-sidecar
+      image: 'envoyproxy/envoy:v1.21.6'
+      args:
+      - '-c'
+      - /config/envoy.yaml
+      ports:
+      - name: egress-http-1
+        containerPort: 10000
+        protocol: TCP
+      volumeMounts:
+      - name: envoy-config
+        mountPath: /config
+      - name: envoy-certs
+        mountPath: /certs
+    extraVolumes:
+    - name: envoy-config
+      configMap:
+        name: thanos-query-envoy-config
+        defaultMode: 420
+        optional: false
+    - name: envoy-certs
+      secret:
+        secretName: query-observer.dnation.cloud
+        defaultMode: 420
+        optional: false
+
+thanosQueryEnvoySidecar:
+  enabled: true
+  config:
+  - listenPort: 10000
+    name: harbor-cluster
+    queryPort: 443
+    queryUrl: query-harbor.dnation.cloud
+    tls:
+      certificate_chain: /certs/tls.crt
+      private_key: /certs/tls.key
+      trusted_ca: /certs/ca.crt
+  service:
+    labels:
+      name: thanos-query-envoy
+    name: thanos-query-envoy
+    selector:
+      app.kubernetes.io/component: query
+      app.kubernetes.io/name: thanos
+
+kube-prometheus-stack:
+  defaultRules:
+    disabled:
+      PrometheusNotConnectedToAlertmanagers: true
