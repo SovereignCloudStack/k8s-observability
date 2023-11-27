@@ -7,7 +7,8 @@ be extended, and the other two observability signals (logs and traces) from the 
 infrastructure could also be processed here.
 
 _This repository builds a base for an Observer monitoring solution intended to become an **SCS product**
-in the future versions, once it attains sufficient stability._
+in the future versions, once it attains sufficient stability. Currently, it is not
+intended for deployment in production environments._
 
 The current state implements the initial iteration of the Observer monitoring solution,
 deployed in the Kubernetes cluster, subsequently referred to as the Observer cluster.
@@ -19,9 +20,6 @@ implements three use cases:
 
 _The monitoring stack employed for observing the KaaS layer and infrastructure services
 is designed to serve as an **SCS product** in the future versions, once it attains sufficient stability.
-This is because the monitoring focuses on elements like Kubernetes clusters and infrastructure
-services, utilizing Kubernetes API and protocols such as HTTP(S), TCP, ICMP, etc.,
-which are aspects CSPs are unlikely to alter._
 
 TODO: insert a high leve; arch. diagram here
 
@@ -42,6 +40,8 @@ The monitoring of the IaaS layer use case is beyond the scope of these deploymen
 - [helm](https://helm.sh/)
 - [jsonnet](https://github.com/google/go-jsonnet)
 - [python 3.8+](https://www.python.org/) - needed for Monitoring of the KaaS layer use case
+- [make](https://www.gnu.org/software/make/)
+- [git](https://git-scm.com/)
 
 ## Observer monitoring deployment
 
