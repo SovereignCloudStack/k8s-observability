@@ -1,0 +1,29 @@
+thanosStorage:
+  secret:
+    name: thanos-objstore-config
+    key: objstore.yml
+  config: |-
+   type: S3
+   config:
+     endpoint: "<url-of-the-S3-endpoint>"
+     bucket: "<observer-bucket-name>"
+     access_key: "<access-key>"
+     secret_key: "<secret-key>"
+
+thanos:
+  existingObjstoreSecret: thanos-objstore-config
+  bucketweb:
+    enabled: true
+  storegateway:
+    enabled: true
+  compactor:
+    enabled: true
+
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      thanos:
+        objectStorageConfig:
+          existingSecret:
+            name: thanos-objstore-config
+            key: objstore.yml

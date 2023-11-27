@@ -1,0 +1,84 @@
+thanos:
+  query:
+    replicaCount: 2
+    replicaLabel: [prometheus_replica]
+    ingress:
+      enabled: false
+      grpc:
+        enabled: true
+        ingressClassName: nginx
+        annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+          nginx.ingress.kubernetes.io/ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/grpc-backend: "true"
+          nginx.ingress.kubernetes.io/auth-tls-secret: "default/query-harbor.dnation.cloud"
+          nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+        hostname: query-harbor.dnation.cloud
+        tls: false
+        extraTls:
+        - hosts:
+          - query-harbor.dnation.cloud
+          secretName: query-harbor.dnation.cloud
+
+containerLabel: &containerLabel
+  sourceLabels: [__meta_kubernetes_pod_container_name]
+  separator: ;
+  regex: ^(.*)$
+  targetLabel: container
+  replacement: $1
+  action: replace
+
+dnation-kubernetes-monitoring:
+  dnation-kubernetes-jsonnet-translator:
+    enabled: false
+  prometheusRules:
+    enable: false
+  grafanaDashboards:
+    enable: false
+  clusterMonitoring:
+    clusters:
+    - name: Harbor
+      description: 'Harbor cluster monitoring'
+      label: harbor-cluster
+      apps:
+      - name: harbor
+        description: Harbor
+        jobName: harbor
+        serviceMonitor:
+          jobLabel: app
+          namespaceSelector:
+            matchNames:
+            - default
+          selector:
+            matchLabels:
+              app: harbor
+          endpoints:
+          - port: http-metrics
+            interval: 30s
+            path: /metrics
+            relabelings:
+            - *containerLabel
+
+loki:
+  enabled: false
+promtail:
+  enabled: false
+
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      replicas: 2
+      externalLabels:
+        cluster: "harbor-cluster"
+  alertmanager:
+    enabled: false
+  grafana:
+    enabled: false
+  defaultRules:
+    create: false
+  kubeScheduler:
+    serviceMonitor:
+      insecureSkipVerify: true
+  kubeControllerManager:
+    serviceMonitor:
+      insecureSkipVerify: true

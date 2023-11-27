@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: server
+spec:
+  commonName: query-harbor.dnation.cloud
+  dnsNames:
+  - query-harbor.dnation.cloud
+  issuerRef:
+    kind: Issuer
+    name: issuer-ca
+  secretName: query-harbor.dnation.cloud
+  duration: 8760h
+  usages:
+  - server auth
