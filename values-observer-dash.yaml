@@ -3,6 +3,7 @@ grafanaDashboards:
 prometheusRules:
   labelPrometheus:
     prometheus_rule: '2'
+  alertInterval: "0m"
 
 clusterMonitoring:
   clusters:
