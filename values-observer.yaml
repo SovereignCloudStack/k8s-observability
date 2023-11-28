@@ -71,6 +71,8 @@ kube-prometheus-stack:
     service:
       type: NodePort
       nodePort: 30000
+    env:
+      GF_AUTH_ANONYMOUS_ENABLED: true
   prometheus:
     prometheusSpec:
       replicas: 2
