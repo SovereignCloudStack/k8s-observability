@@ -7,7 +7,8 @@ prometheus:
       cluster: "workload-cluster"
     remoteWrite:
     - name: "workload-cluster-remote-write"
-      url: http://<ip-of-node>:30291/api/v1/receive
+      # TODO fix this and use https instead:
+      url: "http://<ip-of-node>:30291/api/v1/receive"
 
 ## See https://github.com/dNationCloud/kubernetes-monitoring-stack/blob/main/chart/values.yaml#L264
 prometheus-node-exporter:
@@ -24,8 +25,10 @@ defaultRules:
 
 kubeScheduler:
   serviceMonitor:
+    # TODO fix this:
     insecureSkipVerify: true
 
 kubeControllerManager:
   serviceMonitor:
-   insecureSkipVerify: true
+    # TODO fix this:
+    insecureSkipVerify: true

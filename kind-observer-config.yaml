@@ -1,0 +1,35 @@
+# Basic KinD cluster configuration developed for KaaS demo purposes
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: "127.0.0.1"
+nodes:
+- role: worker
+- role: control-plane
+  extraPortMappings:
+    - containerPort: 30000  # Grafana UI
+      hostPort: 30000
+    - containerPort: 30001  # Alertmanager UI
+      hostPort: 30001
+  kubeadmConfigPatches:
+    - |
+      apiVersion: kubeproxy.config.k8s.io/v1alpha1
+      kind: KubeProxyConfiguration
+      metricsBindAddress: 0.0.0.0:10249
+    - |
+      apiVersion: kubeadm.k8s.io/v1beta3
+      kind: ClusterConfiguration
+      etcd:
+        local:
+          extraArgs:
+            listen-metrics-urls: http://0.0.0.0:2381
+      scheduler:
+        extraArgs:
+          secure-port: "10259"
+          bind-address: 0.0.0.0
+          authorization-always-allow-paths: "/healthz,/readyz,/livez,/metrics"
+      controllerManager:
+        extraArgs:
+          secure-port: "10257"
+          bind-address: 0.0.0.0
+          authorization-always-allow-paths: "/healthz,/readyz,/livez,/metrics"

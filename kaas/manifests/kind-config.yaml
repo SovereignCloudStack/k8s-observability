@@ -1,5 +1,8 @@
+# Basic KinD cluster configuration developed for KaaS demo purposes
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: "0.0.0.0"
 nodes:
 - role: worker
 - role: control-plane
@@ -25,3 +28,12 @@ nodes:
           secure-port: "10257"
           bind-address: 0.0.0.0
           authorization-always-allow-paths: "/healthz,/readyz,/livez,/metrics"
+## Add certSANs is needed via this patch
+#  kubeadmConfigPatchesJSON6902:
+#  - group: kubeadm.k8s.io
+#    version: v1beta3
+#    kind: ClusterConfiguration
+#    patch: |
+#      - op: add
+#        path: /apiServer/certSANs/-
+#        value: "213.131.230.7"

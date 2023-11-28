@@ -1,0 +1,5 @@
+__pycache__
+kubernetes-monitoring
+kaas/*.db
+kaas/.venv
+kaas/manifests/observer-kubeconfig.yaml

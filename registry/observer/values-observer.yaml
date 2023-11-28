@@ -1,7 +1,7 @@
+thanos:
   query:
     stores:
     - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
-    - 213.131.230.77:10901
     - dnssrv+_http-harbor-cluster._tcp.thanos-query-envoy
     sidecars:
     - name: envoy-sidecar

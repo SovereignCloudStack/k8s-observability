@@ -20,7 +20,6 @@ thanos:
     replicaLabel: [agent_replica, sidecar_replica, prometheus_replica]
     stores:
     - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
-    - 213.131.230.153:10901
   receive:
     enabled: true
     replicaCount: 1
@@ -47,11 +46,28 @@ promtail:
 kube-prometheus-stack:
   kubeScheduler:
     serviceMonitor:
+      # TODO fix this:
       insecureSkipVerify: true
   kubeControllerManager:
     serviceMonitor:
-     insecureSkipVerify: true
+      # TODO fix this:
+      insecureSkipVerify: true
   grafana:
+## SCS branding
+#    extraConfigmapMounts:
+#      - name: scs-logo
+#        mountPath: /usr/share/grafana/public/img/scs_logo.svg
+#        subPath: scs_logo.svg
+#        configMap: scs-logo
+#      - name: dnation-home
+#        mountPath: /usr/share/grafana/public/dashboards/home.json
+#        subPath: home.json
+#        configMap: dnation-home
+#    extraSecretMounts:
+#      - name: scs-brand
+#        mountPath: /etc/secrets
+#        secretName: scs-brand
+#        defaultMode: 0755
     service:
       type: NodePort
       nodePort: 30000
@@ -79,6 +95,10 @@ kube-prometheus-stack:
           annotations:
             message: 'Cluster {{ $labels.cluster }} is down.'
   nameOverride: kube-prometheus
+  alertmanager:
+    service:
+      type: NodePort
+      nodePort: 30001
   thanosRuler:
     enabled: true
     service:

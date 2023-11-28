@@ -6,15 +6,11 @@ serviceMonitor:
       release: dnation-kubernetes-monitoring-stack
 
   targets:
-  - name: dnation-registry
-    url: https://registry.dnation.cloud
-  - name: dnation-cloud
-    url: https://dnation.cloud
   - name: scs-registry
     url: https://registry.scs.community/account/sign-in
-  - name: scs-conf
+  - name: scs-jitsi
     url: https://conf.scs.koeln:8443/
-  - name: scs-community-hedgedoc
+  - name: scs-hedgedoc
     url: https://input.scs.community/
   - name: scs-nextcloud
     url: https://scs.sovereignit.de/nextcloud/login
