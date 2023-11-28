@@ -62,11 +62,7 @@ Deploy dnation-kubernetes-monitoring-stack with SCS variables:
 _Optional_: Configure the object store as a long-term storage for metrics. Fill the
 `thanos-objstore.yaml` template manifest with the bucket credentials (refer to `thanosStorage.config`).
 
-```bash
-# Apply SCS brand customization
-kubectl apply -f scs/logo.yaml
-kubectl apply -f scs/brand.yaml
-```
+_Optional_: Apply SCS brand, see [scs/README](./scs/README.md).
 
 ```bash
 helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
