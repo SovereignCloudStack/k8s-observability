@@ -109,7 +109,7 @@ kube-prometheus-stack:
           labels:
             severity: warning
           annotations:
-            message: '"Blackbox probe on target: {{ $labels.target }} took more than 5s to complete, probe time = {{ $value }}'
+            message: 'Blackbox probe on target: {{ $labels.target }} took more than 5s to complete, probe time = {{ $value }}'
         - alert: BlackboxSslCertificateWillExpireSoon
           expr: 'round((probe_ssl_earliest_cert_expiry - time()) / 86400, 0.1) < 30'
           for: 5m
