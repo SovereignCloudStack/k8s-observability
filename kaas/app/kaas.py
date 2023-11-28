@@ -146,6 +146,10 @@ async def get_kubeconfig(name: str, db: Session = Depends(get_db)):
         )
 
     kubeconfig = yaml.safe_load(resp)
+    if settings.KAAS_HOST:(
+        kubeconfig)["clusters"][0]["cluster"]["server"] = kubeconfig["clusters"][0][
+            "cluster"
+        ]["server"].replace("0.0.0.0", settings.KAAS_HOST)
 
     return kubeconfig
 

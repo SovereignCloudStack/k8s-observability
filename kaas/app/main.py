@@ -18,11 +18,7 @@ The SCS KaaS mock service is designed solely for development and demonstration p
 * **Get KaaS cluster kubeconfig**
 """
 
-app = FastAPI(
-    title="SCS KaaS service",
-    description=description,
-    docs_url="/kaas"
-)
+app = FastAPI(title="SCS KaaS service", description=description, docs_url="/kaas")
 
 app.add_middleware(
     CORSMiddleware,

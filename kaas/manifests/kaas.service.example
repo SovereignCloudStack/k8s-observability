@@ -1,0 +1,18 @@
+# Systemd unit file example
+# 1. Create `/etc/systemd/system/kaas.service` file
+# 2, Enable and start systemd KaaS service:
+# sudo systemctl daemon-reload
+# sudo systemctl enable kaas.service
+# sudo systemctl start kaas.service
+[Unit]
+Description=KaaS service
+After=multi-user.target
+[Service]
+User=ubuntu
+Group=ubuntu
+Type=simple
+Restart=always
+WorkingDirectory=/home/ubuntu/k8s-observability/kaas
+ExecStart=python3 -m uvicorn app.main:app  --host 0.0.0.0 --port 8080
+[Install]
+WantedBy=multi-user.target

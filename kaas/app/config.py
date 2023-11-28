@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     SQLITE_DATABASE_PATH: str = "./kaas.db"
     KAAS_MAX_CLUSTERS: int = 4
+    KAAS_HOST: str = ""
     KAAS_IMAGE: str = "kindest/node:v1.25.11"
     KAAS_CONFIG: str = "./manifests/kind-config.yaml"
     KAAS_MONITORING_CONFIG: str = "./manifests/kaas-monitoring-values.yaml"
