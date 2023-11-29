@@ -132,6 +132,33 @@ If you want a nice dashboard for monitoring `HTTP` and `HTTPS` endpoints, just a
 kubectl apply -f dashboards/blackbox-dashboard.yaml
 ```
 
+### Optional: Monitoring of IaaS layer deployment
+
+To test the Monitoring of the IaaS layer use case, follow next steps.
+
+**_NOTE:_** As an example for monitoring of IaaS layer deployment, we used `Testbed`.
+
+1. Add the IP address of IaaS into the thanos query store to be able to scrape metrics.
+
+```bash
+  query:
+    stores:
+    - 213.131.230.77:10901 # testbed IP adrress as an example of IaaS
+```
+
+2. Enable IaaS layer in your monitoring. You can do that by setting a specific field in your values like it is in `values-observer-dash.yaml`:
+
+```bash
+testbedMonitoring:
+  enabled: true
+```
+
+3. Apply some specific dashboards for Testbed as an example of monitoring of IaaS layer deployment.
+
+```bash
+kubectl apply -f dashboards/testbed
+```
+
 ### Access Observer monitoring Grafana UI
 
 At this point, you should have the ability to access the Grafana and Alertmanager UIs
