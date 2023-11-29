@@ -1,4 +1,5 @@
 thanos:
+  fullnameOverride: thanos
   query:
     replicaCount: 2
     replicaLabel: [prometheus_replica]
