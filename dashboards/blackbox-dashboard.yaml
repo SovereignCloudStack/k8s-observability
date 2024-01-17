@@ -441,7 +441,7 @@ data:
           "targets": [
             {
               "datasource": "thanos",
-              "expr": "probe_success{job=~\"$job\", instance=~\"$instance\"}",
+              "expr": "probe_success{job=~\"$job\", target=~\"$target\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -450,7 +450,7 @@ data:
             },
             {
               "datasource": "thanos",
-              "expr": "probe_http_ssl{job=~\"$job\", instance=~\"$instance\"} > 0",
+              "expr": "probe_http_ssl{job=~\"$job\", target=~\"$target\"} > 0",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -459,7 +459,7 @@ data:
             },
             {
               "datasource": "thanos",
-              "expr": "(probe_ssl_earliest_cert_expiry{job=~\"$job\", instance=~\"$instance\"} - time()) / 3600 / 24",
+              "expr": "(probe_ssl_earliest_cert_expiry{job=~\"$job\", target=~\"$target\"} - time()) / 3600 / 24",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -468,7 +468,7 @@ data:
             },
             {
               "datasource": "thanos",
-              "expr": "probe_http_status_code{job=~\"$job\", instance=~\"$instance\"} > 0",
+              "expr": "probe_http_status_code{job=~\"$job\", target=~\"$target\"} > 0",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -477,7 +477,7 @@ data:
             },
             {
               "datasource": "thanos",
-              "expr": "avg_over_time(probe_duration_seconds{job=~\"$job\", instance=~\"$instance\"}[1m])",
+              "expr": "avg_over_time(probe_duration_seconds{job=~\"$job\", target=~\"$target\"}[1m])",
               "format": "table",
               "hide": false,
               "instant": false,
@@ -488,7 +488,7 @@ data:
             },
             {
               "datasource": "thanos",
-              "expr": "probe_tls_version_info{job=~\"$job\", instance=~\"$instance\"}",
+              "expr": "probe_tls_version_info{job=~\"$job\", target=~\"$target\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -497,7 +497,7 @@ data:
             },
             {
               "datasource": "thanos",
-              "expr": "avg_over_time(probe_dns_lookup_time_seconds{job=~\"$job\", instance=~\"$instance\"}[1m])",
+              "expr": "avg_over_time(probe_dns_lookup_time_seconds{job=~\"$job\", target=~\"$target\"}[1m])",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -716,7 +716,7 @@ data:
           "targets": [
             {
               "datasource": "thanos",
-              "expr": "sum(probe_http_duration_seconds{job=~\"$job\", instance=~\"$instance\"}) by (instance)",
+              "expr": "sum(probe_http_duration_seconds{job=~\"$job\", target=~\"$target\"}) by (target)",
               "instant": false,
               "interval": "",
               "intervalFactor": 2,
@@ -818,7 +818,7 @@ data:
               "targets": [
                 {
                   "datasource": "thanos",
-                  "expr": "probe_http_duration_seconds{job=~\"$job\", instance=~\"$instance\"}",
+                  "expr": "probe_http_duration_seconds{job=~\"$job\", target=~\"$target\"}",
                   "interval": "",
                   "intervalFactor": 2,
                   "legendFormat": "{{ phase }}",
@@ -857,14 +857,14 @@ data:
               }
             }
           ],
-          "repeat": "instance",
+          "repeat": "target",
           "targets": [
             {
               "datasource": "thanos",
               "refId": "A"
             }
           ],
-          "title": "$instance",
+          "title": "$target",
           "type": "row"
         }
       ],
@@ -910,14 +910,14 @@ data:
               "value": "$__all"
             },
             "datasource": "thanos",
-            "definition": "label_values(probe_success{job=~\"$job\"}, instance)",
+            "definition": "label_values(probe_success{job=~\"$job\"}, target)",
             "hide": 0,
             "includeAll": true,
-            "label": "Instance",
+            "label": "Target",
             "multi": false,
-            "name": "instance",
+            "name": "target",
             "options": [],
-            "query": "label_values(probe_success{job=~\"$job\"}, instance)",
+            "query": "label_values(probe_success{job=~\"$job\"}, target)",
             "refresh": 1,
             "regex": "",
             "skipUrlSync": false,

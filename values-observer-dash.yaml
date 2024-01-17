@@ -10,12 +10,132 @@ clusterMonitoring:
   - name: Observer
     label: observer-cluster
     description: 'Observer cluster monitoring'
+## Uncomment when you want to observe also Harbor cluster
+#  - name: Harbor
+#    description: 'Harbor cluster monitoring'
+#    label: harbor-cluster
+#    apps:
+#    - name: harbor
+#      description: Harbor
+#      jobName: harbor
+#      templates:
+#        harbor:
+#          enabled: true
 
-kaasMonitoring:
-  enabled: true
+## Uncomment only when Observer and Harbor management VMs have been bootstrap with node and cadvisor exporters
+#hostMonitoring:
+#  enabled: true
+#  hosts:
+#  - name: observer-mgmt
+#    description: Observer management VM
+#    jobName: observer-mgmt
+#    host:
+#      address: 213.131.230.206
+#    serviceMonitor:
+#      endpoints:
+#      - port: "9100"
+#        interval: 30s
+#        path: /metrics
+#    apps:
+#    - name: observer-mgmt-docker
+#      description: Observer management Docker containers
+#      jobName: observer-mgmt-docker
+#      templates:
+#        cAdvisor:
+#          enabled: true
+#      serviceMonitor:
+#        endpoints:
+#        - port: "9180"
+#          interval: 30s
+#          path: /metrics
+#  - name: harbor-mgmt
+#    description: Harbor management VM
+#    jobName: harbor-mgmt
+#    host:
+#      address: 213.131.230.72
+#    serviceMonitor:
+#      endpoints:
+#      - port: "9100"
+#        interval: 30s
+#        path: /metrics
+#    apps:
+#    - name: harbor-mgmt-docker
+#      description: Harbor management Docker containers
+#      jobName: harbor-mgmt-docker
+#      templates:
+#        cAdvisor:
+#          enabled: true
+#      serviceMonitor:
+#        endpoints:
+#        - port: "9180"
+#          interval: 30s
+#          path: /metrics
+## Uncomment only when SCS Zuul VM has been bootstrap with node and cadvisor exporters
+#  - name: zuul
+#    description: SCS Zuul VM
+#    jobName: zuul-scs
+#    host:
+#      address: 213.131.230.42
+#    serviceMonitor:
+#      endpoints:
+#      - port: "9100"
+#        interval: 30s
+#        path: /metrics
+#    apps:
+#    - name: zuul-docker
+#      description: SCS Zuul Docker containers
+#      jobName: zuul-scs-docker
+#      templates:
+#        cAdvisor:
+#          enabled: true
+#      serviceMonitor:
+#        endpoints:
+#        - port: "9180"
+#          interval: 30s
+#          path: /metrics
+## Zuul statsd panels
+#    - name: status-statsd
+#      description: SCS Zuul Status
+#      jobName: zuulStatus
+#      templates:
+#        zuulStatus:
+#          enabled: true
+#    - name: nodepool-statsd
+#      description: SCS Zuul Nodepool
+#      jobName: zuulNodepool
+#      templates:
+#        zuulNodepool:
+#          enabled: true
+#
+#templates:
+#  L1:
+#    hostApps:
+#      zuulStatus:
+#        default: false
+#        panel:
+#          dataLinks: [{ title: 'Detail', url: '/d/zuulstatus' }]
+#          expr: 'vector(-1)'
+#          mappings: [{ "type": "value", "options": { "-1": { "text": "Status" }}}]
+#          thresholds: { "mode": "absolute", "steps": [{ "value": -1, "color": "transparent" }]}
+#          gridPos:
+#            w: 4
+#      zuulNodepool:
+#        default: false
+#        panel:
+#          dataLinks: [{ title: 'Detail', url: '/d/zuulnodepool' }]
+#          expr: 'vector(-1)'
+#          mappings: [{ "type": "value", "options": { "-1": { "text": "Nodepool" }}}]
+#          thresholds: { "mode": "absolute", "steps": [{ "value": -1, "color": "transparent" }]}
+#          gridPos:
+#            w: 4
 
 blackboxMonitoring:
   enabled: true
 
+kaasMonitoring:
+  ## Enable kaasMonitoring if you want to deploy MVP0 version
+  enabled: false
+
 testbedMonitoring:
-  enabled: true
+  ## Enable testbedMonitoring if you want to deploy MVP0 version
+  enabled: false
