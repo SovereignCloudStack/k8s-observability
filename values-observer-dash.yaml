@@ -116,7 +116,7 @@ clusterMonitoring:
 #          dataLinks: [{ title: 'Detail', url: '/d/zuulstatus' }]
 #          expr: 'vector(-1)'
 #          mappings: [{ "type": "value", "options": { "-1": { "text": "Status" }}}]
-#          thresholds: { "mode": "absolute", "steps": [{ "value": -1, "color": "transparent" }]}
+#          thresholds: { "value": -1, "color": "transparent" }
 #          gridPos:
 #            w: 4
 #      zuulNodepool:
@@ -125,7 +125,7 @@ clusterMonitoring:
 #          dataLinks: [{ title: 'Detail', url: '/d/zuulnodepool' }]
 #          expr: 'vector(-1)'
 #          mappings: [{ "type": "value", "options": { "-1": { "text": "Nodepool" }}}]
-#          thresholds: { "mode": "absolute", "steps": [{ "value": -1, "color": "transparent" }]}
+#          thresholds: { "value": -1, "color": "transparent" }
 #          gridPos:
 #            w: 4
 
