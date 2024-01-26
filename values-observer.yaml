@@ -13,15 +13,49 @@ thanos:
         "validity": 0s
       "type": "in-memory"
   query:
+    stores:
+      - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
+## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+##   Thanos query should be exposed via ingres and then the store address below should be used.
+## - dnssrv+_http-harbor-cluster._tcp.thanos-query-envoy
+## Uncomment this if you want to observe Harbor cluster via node port
+#      - 213.131.230.86:31050
+## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+##   Thanos query in Harbor cluster should be exposed via ingress and then the section below should be used.
+#    sidecars:
+#      - name: envoy-sidecar
+#        image: 'envoyproxy/envoy:v1.21.6'
+#        args:
+#        - '-c'
+#        - /config/envoy.yaml
+#        ports:
+#        - name: egress-http-1
+#          containerPort: 10000
+#          protocol: TCP
+#        volumeMounts:
+#        - name: envoy-config
+#          mountPath: /config
+#        - name: envoy-certs
+#          mountPath: /certs
+#    extraVolumes:
+#      - name: envoy-config
+#        configMap:
+#          name: thanos-query-envoy-config
+#          defaultMode: 420
+#          optional: false
+#      - name: envoy-certs
+#        secret:
+#          secretName: query-observer.dnation.cloud
+#          defaultMode: 420
+#          optional: false
     replicaCount: 2
     extraFlags:
     - --query.auto-downsampling
     - --query.lookback-delta=1m
     replicaLabel: [agent_replica, sidecar_replica, prometheus_replica]
-    stores:
-    - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
   receive:
-    enabled: true
+    ## Enable thanos receiver if you want to deploy MVP0 version
+    enabled: false
     replicaCount: 1
     replicaLabel: receive_replica
     service:
@@ -30,6 +64,27 @@ thanos:
         remote: 30291
     tsdbRetention: 1d
 
+## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+##   Thanos query in Harbor cluster should be exposed via ingress and then the section below should be used.
+#thanosQueryEnvoySidecar:
+#  enabled: true
+#  config:
+#  - listenPort: 10000
+#    name: harbor-cluster
+#    queryPort: 443
+#    queryUrl: query-harbor.dnation.cloud
+#    tls:
+#      certificate_chain: /certs/tls.crt
+#      private_key: /certs/tls.key
+#      trusted_ca: /certs/ca.crt
+#  service:
+#    labels:
+#      name: thanos-query-envoy
+#    name: thanos-query-envoy
+#    selector:
+#      app.kubernetes.io/component: query
+#      app.kubernetes.io/name: thanos
+
 grafanaDatasourcesAsConfigMap:
   cluster-metrics:
   - name: thanos
@@ -37,6 +92,14 @@ grafanaDatasourcesAsConfigMap:
     type: prometheus
     access: proxy
     url: http://thanos-query-frontend:9090
+## Uncomment if you want to use graphite datasource for zuul
+#  zuul-metrics:
+#    - name: graphite
+#      type: graphite
+#      access: proxy
+#      url: http://graphite:8080
+#      jsonData:
+#        graphiteVersion: "1.1"
   cluster-logs: null
 loki:
   enabled: false
@@ -44,16 +107,29 @@ promtail:
   enabled: false
 
 kube-prometheus-stack:
-  kubeScheduler:
-    serviceMonitor:
-      # TODO fix this:
-      insecureSkipVerify: true
-  kubeControllerManager:
-    serviceMonitor:
-      # TODO fix this:
-      insecureSkipVerify: true
   grafana:
-## SCS branding
+    service:
+      type: NodePort
+      nodePort: 30000
+## Grafana admin password override (defaults to `pass`)
+#    adminPassword: "replaceme"
+## Uncomment if you want to expose UI (Grafana) via HTTPS endpoint `monitoring.scs.community`
+## see and apply let's encrypt issuer defined in `scs/issuer.yaml`
+#    ingress:
+#      enabled: true
+#      annotations:
+#        cert-manager.io/issuer: "letsencrypt-issuer"
+#      ingressClassName: nginx
+#      hosts:
+#      - monitoring.scs.community
+#      tls:
+#      - secretName: monitoring-grafana-tls
+#        hosts:
+#        - monitoring.scs.community
+## Uncomment if you want to allow anonymous access to the UI (Grafana)
+#    env:
+#      GF_AUTH_ANONYMOUS_ENABLED: true
+## Uncomment if you want to apply a custom SCS branding
 #    extraConfigmapMounts:
 #      - name: scs-logo
 #        mountPath: /usr/share/grafana/public/img/scs_logo.svg
@@ -68,11 +144,14 @@ kube-prometheus-stack:
 #        mountPath: /etc/secrets
 #        secretName: scs-brand
 #        defaultMode: 0755
-    service:
-      type: NodePort
-      nodePort: 30000
-    env:
-      GF_AUTH_ANONYMOUS_ENABLED: true
+  kubeScheduler:
+    serviceMonitor:
+      # TODO fix this:
+      insecureSkipVerify: true
+  kubeControllerManager:
+    serviceMonitor:
+      # TODO fix this:
+      insecureSkipVerify: true
   prometheus:
     prometheusSpec:
       replicas: 2
@@ -82,6 +161,8 @@ kube-prometheus-stack:
   defaultRules:
     labels:
       prometheus_rule: '2'
+    disabled:
+      PrometheusNotConnectedToAlertmanagers: true
   additionalPrometheusRulesMap:
     dnation-kubernetes-monitoring-rules:
       additionalLabels:
@@ -89,13 +170,14 @@ kube-prometheus-stack:
       groups:
       - name: k8s.rules
         rules:
-        - alert: KubernetesMonitoringClusterDown
-          expr: 'kaas unless on(cluster) up'
-          labels:
-            alertgroup: Cluster
-            severity: critical
-          annotations:
-            message: 'Cluster {{ $labels.cluster }} is down.'
+## Uncomment if you want to deploy MVP0 version
+#        - alert: KubernetesMonitoringClusterDown
+#          expr: 'kaas unless on(cluster) up'
+#          labels:
+#            alertgroup: Cluster
+#            severity: critical
+#          annotations:
+#            message: 'Cluster {{ $labels.cluster }} is down.'
         - alert: BlackboxProbeFailed
           expr: 'probe_success == 0'
           for: 5m

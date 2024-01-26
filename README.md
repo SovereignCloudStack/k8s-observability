@@ -48,7 +48,7 @@ The monitoring of the IaaS layer use case is beyond the scope of these deploymen
 ### Create Kubernetes cluster
 
 ```bash
-kind create cluster --config kind-observer-config.yaml --image kindest/node:v1.25.11 --name observer
+kind create cluster --config kind-observer-config.yaml --image kindest/node:v1.27.3 --name observer
 ```
 
 If you opt not to use KinD and prefer utilizing an existing Kubernetes cluster,
@@ -62,7 +62,13 @@ Deploy dnation-kubernetes-monitoring-stack with SCS variables:
 _Optional_: Configure the object store as a long-term storage for metrics. Fill the
 `thanos-objstore.yaml` template manifest with the bucket credentials (refer to `thanosStorage.config`).
 
-_Optional_: Apply SCS brand, see [scs/README](./scs/README.md).
+_Optional_: Apply SCS brand secrets and optionally also letsencrypt issuer.
+  Uncomment also all SCS brand related parts in `values-observer.yaml`.
+  ```bash
+  kubectl apply -f scs/logo.yaml
+  kubectl apply -f scs/brand.yaml
+  kubectl apply -f scs/issuer.yaml  # Optional
+  ```
 
 ```bash
 helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
@@ -91,6 +97,8 @@ helm upgrade --install dnation-kubernetes-monitoring kubernetes-monitoring/chart
 ```
 
 ### Optional: Monitoring of the KaaS layer deployment
+
+Note: This section is part of MVP0 version
 
 To test the Monitoring of the KaaS layer use case, deploy the Kaas-metric-importer
 into the Observer cluster.
@@ -133,6 +141,8 @@ kubectl apply -f dashboards/blackbox-dashboard.yaml
 ```
 
 ### Optional: Monitoring of IaaS layer deployment
+
+Note: This section is part of MVP0 version
 
 To test the Monitoring of the IaaS layer use case, follow next steps.
 
@@ -178,6 +188,8 @@ within the Observer monitoring cluster.
   ```
 
 ## Monitoring of the KaaS layer use case
+
+Note: This section is part of MVP0 version
 
 Refer to [kaas README file](./kaas/README.md).
 
