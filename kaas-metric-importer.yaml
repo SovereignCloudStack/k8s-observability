@@ -23,7 +23,7 @@ spec:
       containers:
       - name: kaas-metric-importer
         # https://github.com/m3dbx/prometheus_remote_client_golang/blob/master/Dockerfile
-        image: registry.dnation.cloud/library/promremote
+        image: registry.scs.community/k8s-observability/promremote
         command: ["/bin/sh"]
         args:
         - -c

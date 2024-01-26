@@ -204,6 +204,24 @@ kube-prometheus-stack:
     service:
       type: NodePort
       nodePort: 30001
+## Uncomment if you want to forward alerts into matrix chat
+## See also docs in matrix-alertmanager/README.md
+#    alertmanagerSpec:
+#      externalUrl: http://localhost:30000
+#    config:
+#      route:
+#        receiver: 'matrix-notifications'
+#        group_by: ['alertname', 'job', 'severity']
+#        repeat_interval: 24h
+#        routes:
+#        - receiver: 'null'
+#          match:
+#            alertname: Watchdog
+#      receivers:
+#      - name: 'null'
+#      - name: 'matrix-notifications'
+#        webhook_configs:
+#        - url: "http://matrix-alertmanager-receiver:3000/alerts/alert-room"
   thanosRuler:
     enabled: true
     service:

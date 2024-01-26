@@ -197,6 +197,10 @@ Refer to [kaas README file](./kaas/README.md).
 
 Refer to [registry README file](./registry/README.md).
 
+## Forwarding of alerts into Matrix chat
+
+Refer to [matrix-alertmanager README file](./matrix-alertmanager/README.md).
+
 # References
 
 Refer to the links of pull requests, branches, or repositories containing SCS related code:
