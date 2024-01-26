@@ -37,7 +37,7 @@ data:
           icon: ✅
         when-matching-status: resolved
       firing-template:
-        '<strong><font color="{{ .ComputedValues.color }}">{{ .ComputedValues.icon }} {{ .ComputedValues.title }}</font></strong><br>
+        '<strong><font color="{{ .ComputedValues.color }}">{{ .ComputedValues.icon }} {{ .ComputedValues.title }} </font>from {{ .ExternalURL }}</strong><br>
         {{- $alert := .Alert }}
         {{- $externalURL := .ExternalURL }}
         Annotations:
