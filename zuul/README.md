@@ -9,6 +9,11 @@ helm add repo kiwigrid https://kiwigrid.github.io
 helm upgrade --install graphite kiwigrid/graphite -f values-zuul.yaml
 ```
 
+A UDP load balancer that exposes the Graphite receiver service:
+```bash
+kubectl apply -f udp-lb-service.yaml
+```
+
 Zuul dashboards:
 ```bash
 kubectl apply -f zuul-status-dashboard.yaml

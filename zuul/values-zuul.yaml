@@ -1,6 +1,3 @@
-service:
-  type: NodePort
-
 persistence:
     size: 100Gi
 
