@@ -93,6 +93,18 @@ clusterMonitoring:
 #        - port: "9180"
 #          interval: 30s
 #          path: /metrics
+## Zuul zookeeper panel
+#    - name: zookeeper
+#      description: SCS Zuul Zookeeper
+#      jobName: zuul-zookeeper
+#      templates:
+#        zuulZookeeper:
+#          enabled: true
+#      serviceMonitor:
+#        endpoints:
+#          - port: "7000"
+#            interval: 30s
+#            path: /metrics
 ## Zuul statsd panels
 #    - name: status-statsd
 #      description: SCS Zuul Status
@@ -126,6 +138,19 @@ clusterMonitoring:
 #          expr: 'vector(-1)'
 #          mappings: [{ "type": "value", "options": { "-1": { "text": "Nodepool" }}}]
 #          thresholds: { "value": -1, "color": "transparent" }
+#          gridPos:
+#            w: 4
+#      zuulZookeeper:
+#        default: false
+#        panel:
+#          dataLinks: [{ title: 'Detail', url: '/d/zuulzookeeper?var-job=zuul-zookeeper&refresh=10s&var-DS_PROMETHEUS=$datasource&from=$__from&to=$__to' }]
+#          expr: '(sum(up{cluster=\"$cluster\", job=~\"zuul-zookeeper\"}) / count(up{cluster=\"$cluster\", job=~\"zuul-zookeeper\"}))*100 OR on() vector(-1)'
+#          mappings: [{ "type": "value", "options": { "-1": { "text": "-" }}}]
+#          thresholds:
+#            operator: '<'
+#            lowest: 0
+#            warning: 95
+#            critical: 99
 #          gridPos:
 #            w: 4
 

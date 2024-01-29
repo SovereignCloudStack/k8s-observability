@@ -18,6 +18,7 @@ Zuul dashboards:
 ```bash
 kubectl apply -f zuul-status-dashboard.yaml
 kubectl apply -f zuul-nodepool-dashboard.yaml
+kubectl create -f zuul-zookeeper-dashboard.yaml
 ```
 
 Find and uncomment a related section in `values-observer-dash.yaml` if you want to link the above
