@@ -52,7 +52,18 @@ thanos:
     extraFlags:
     - --query.auto-downsampling
     - --query.lookback-delta=1m
+#    - --web.external-prefix=thanos # Uncomment if you want run thanos query on different path than /, e.g. /thanos
     replicaLabel: [agent_replica, sidecar_replica, prometheus_replica]
+## Uncomment if you want to expose Thanos Query UI via HTTPS endpoint `monitoring.scs.community/thanos`
+## TLS is defined via grafana ingress and for oauth see oauth/README.md
+#    ingress:
+#      enabled: true
+#      annotations:
+#        nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+#        nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+#      ingressClassName: nginx
+#      hostname: monitoring.scs.community
+#      path: /thanos
   receive:
     ## Enable thanos receiver if you want to deploy MVP0 version
     enabled: false
@@ -92,6 +103,7 @@ grafanaDatasourcesAsConfigMap:
     type: prometheus
     access: proxy
     url: http://thanos-query-frontend:9090
+#    url: http://thanos-query-frontend:9090/thanos # Replace if thanos query runs on different path than /
 ## Uncomment if you want to use graphite datasource for zuul
 #  zuul-metrics:
 #    - name: graphite
@@ -204,9 +216,22 @@ kube-prometheus-stack:
     service:
       type: NodePort
       nodePort: 30001
+## Uncomment if you want to expose Alertmanager UI via HTTPS endpoint `monitoring.scs.community/alertmanager`
+## TLS is defined via grafana ingress and for oauth see oauth/README.md
+#    ingress:
+#      enabled: true
+#      annotations:
+#        nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+#        nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+#      ingressClassName: nginx
+#      hosts:
+#      - monitoring.scs.community
+#      paths:
+#      - /alertmanager
 ## Uncomment if you want to forward alerts into matrix chat
 ## See also docs in matrix-alertmanager/README.md
 #    alertmanagerSpec:
+##      routePrefix: /alertmanager # Uncomment if you want run alertmanager on different path than /, e.g. /alertmanager
 #      externalUrl: http://localhost:30000
 #    config:
 #      route:
@@ -237,5 +262,9 @@ kube-prometheus-stack:
           prometheus_rule: '2'
       queryEndpoints:
       - dnssrv+_http._tcp.thanos-query
+## Replace if thanos query runs on different path than /
+#      - http://thanos-query:9090/thanos
       alertmanagersUrl:
       - http://kube-prometheus-alertmanager:9093
+## Replace if alertmanager runs on different path than /
+#      - http://kube-prometheus-alertmanager:9093/alertmanager
