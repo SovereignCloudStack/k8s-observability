@@ -155,7 +155,7 @@ clusterMonitoring:
 #            w: 4
 
 blackboxMonitoring:
-  enabled: true
+  enabled: false
 
 kaasMonitoring:
   ## Enable kaasMonitoring if you want to deploy MVP0 version
