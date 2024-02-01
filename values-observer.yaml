@@ -13,6 +13,10 @@ thanos:
         "validity": 0s
       "type": "in-memory"
   query:
+    service:
+      type: NodePort
+      nodePorts:
+        http: 30002
     stores:
       - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
 ## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
