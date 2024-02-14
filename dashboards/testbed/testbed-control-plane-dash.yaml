@@ -5,7 +5,7 @@ metadata:
   labels:
     app: dnation-kubernetes-monitoring
     grafana_dashboard: "1"
-    release: dnation-kubernetes-monitoring
+    release: dnation-kubernetes-monitoring-stack
 data:
   testbed-control-plane.json: |
     {

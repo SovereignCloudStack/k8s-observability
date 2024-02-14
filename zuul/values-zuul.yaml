@@ -1,5 +1,5 @@
 persistence:
-    size: 100Gi
+  size: 100Gi
 
 configMaps:
   storage-aggregation.conf: |-
