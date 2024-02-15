@@ -4,7 +4,7 @@
 
 1. Create necessary issuers and certificates inside the **observer** cluster:
 
-  Note: skip this until [#32](https://github.com/SovereignCloudStack/k8s-observability/issues/32) is resolved
+   Note: skip this until [#32](https://github.com/SovereignCloudStack/k8s-observability/issues/32) is resolved
    ```bash
    kubectl apply -f observer/mtls/
    ```
@@ -26,22 +26,13 @@
 
 ## (Re)Deploy SCS Registry - observer cluster
 
-Note: Uncomment all registry related parts in `values-observer.yaml` and `values-observer-dash.yaml` and update the
-dnation-kubernetes-monitoring-stack and dnation-kubernetes-monitoring deployments.
+Note: Uncomment all registry related parts in `values-observer.yaml` and update the
+dnation-kubernetes-monitoring-stack deployment.
 
 ### Upgrade dnation-kubernetes-monitoring-stack with additional SCS Registry values
 
 ```bash
 helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack \
-  --set dnation-kubernetes-monitoring.enabled=false \
   -f ../values-observer.yaml \
   -f ../thanos-objstore.yaml  # Optional
-```
-
-### Upgrade dnation-kubernetes-monitoring with additional SCS Registry values
-
-```bash
-helm upgrade --install dnation-kubernetes-monitoring ../kubernetes-monitoring/chart --dependency-update \
-  --set releaseOverride=dnation-kubernetes-monitoring-stack \
-  -f ../values-observer-dash.yaml
 ```

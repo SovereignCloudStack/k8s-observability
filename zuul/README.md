@@ -21,5 +21,5 @@ kubectl apply -f zuul-nodepool-dashboard.yaml
 kubectl create -f zuul-zookeeper-dashboard.yaml
 ```
 
-Find and uncomment a related section in `values-observer-dash.yaml` if you want to link the above
+Find and uncomment a related section in `values-observer.yaml` if you want to link the above
 dashboards to the L1 Zuul host dashboard.

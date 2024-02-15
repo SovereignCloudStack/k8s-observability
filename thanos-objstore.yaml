@@ -18,12 +18,6 @@ thanos:
     enabled: true
   compactor:
     enabled: true
-    retentionResolutionRaw: 2d
-    retentionResolution5m: 10d
-    retentionResolution1h: 15d
-    extraFlags:
-    - --compact.concurrency=3
-    - --downsample.concurrency=3
 
 kube-prometheus-stack:
   prometheus:
