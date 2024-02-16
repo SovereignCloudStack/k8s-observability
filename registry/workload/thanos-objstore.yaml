@@ -18,6 +18,8 @@ thanos:
     enabled: true
   compactor:
     enabled: true
+    persistence:
+      size: 20Gi
 
 kube-prometheus-stack:
   prometheus:
