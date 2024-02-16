@@ -1,0 +1,464 @@
+thanosStorage:
+  secret:
+    name: thanos-objstore-config
+    key: objstore.yml
+  config: |-
+   type: S3
+   config:
+     endpoint: "api.gx-scs.sovereignit.cloud:8080"
+     bucket: monitoring-thanos
+     access_key: <replace-me>
+     secret_key: <replace-me>
+
+thanos:
+  existingObjstoreSecret: thanos-objstore-config
+  bucketweb:
+    enabled: true
+  storegateway:
+    enabled: true
+  compactor:
+    enabled: true
+  fullnameOverride: thanos
+  queryFrontend:
+    enabled: true
+  query:
+#    service:
+#      type: NodePort
+#      nodePorts:
+#        http: 30002
+    stores:
+      - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
+## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+##   Thanos query should be exposed via ingress and then the store address below should be used.
+##      - dnssrv+_http-harbor-cluster._tcp.thanos-query-envoy
+## Uncomment this if you want to observe Harbor cluster via node port
+      - 213.131.230.86:31050
+## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+##   Thanos query in Harbor cluster should be exposed via ingress and then the section below should be used.
+#    sidecars:
+#      - name: envoy-sidecar
+#        image: 'envoyproxy/envoy:v1.21.6'
+#        args:
+#        - '-c'
+#        - /config/envoy.yaml
+#        ports:
+#        - name: egress-http-1
+#          containerPort: 10000
+#          protocol: TCP
+#        volumeMounts:
+#        - name: envoy-config
+#          mountPath: /config
+#        - name: envoy-certs
+#          mountPath: /certs
+#    extraVolumes:
+#      - name: envoy-config
+#        configMap:
+#          name: thanos-query-envoy-config
+#          defaultMode: 420
+#          optional: false
+#      - name: envoy-certs
+#        secret:
+#          secretName: query-observer.dnation.cloud
+#          defaultMode: 420
+#          optional: false
+    replicaCount: 2
+## Uncomment if you want to deploy MVP0 version
+    extraFlags:
+    - --query.auto-downsampling
+#    - --query.lookback-delta=1m
+## Uncomment if you want run thanos query on different path than /, e.g. /thanos
+    - --web.external-prefix=thanos
+    replicaLabel: [agent_replica, sidecar_replica, prometheus_replica]
+## Uncomment if you want to expose Thanos Query UI via HTTPS endpoint `monitoring.scs.community/thanos`
+## TLS is defined via grafana ingress and for oauth see oauth/README.md
+    ingress:
+      enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+        nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+      ingressClassName: nginx
+      hostname: monitoring.scs.community
+      path: /thanos
+  receive:
+    ## Enable thanos receiver if you want to deploy MVP0 version
+    enabled: false
+    replicaCount: 1
+    replicaLabel: receive_replica
+    service:
+      type: NodePort
+      nodePorts:
+        remote: 30291
+    tsdbRetention: 1d
+
+## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+##   Thanos query in Harbor cluster should be exposed via ingress and then the section below should be used.
+#thanosQueryEnvoySidecar:
+#  enabled: true
+#  config:
+#  - listenPort: 10000
+#    name: harbor-cluster
+#    queryPort: 443
+#    queryUrl: query-harbor.dnation.cloud
+#    tls:
+#      certificate_chain: /certs/tls.crt
+#      private_key: /certs/tls.key
+#      trusted_ca: /certs/ca.crt
+#  service:
+#    labels:
+#      name: thanos-query-envoy
+#    name: thanos-query-envoy
+#    selector:
+#      app.kubernetes.io/component: query
+#      app.kubernetes.io/name: thanos
+
+grafanaDatasourcesAsConfigMap:
+  cluster-metrics:
+  - name: thanos
+    isDefault: true
+    type: prometheus
+    access: proxy
+#    url: http://thanos-query-frontend:9090
+    url: http://thanos-query-frontend:9090/thanos # Replace if thanos query runs on different path than /
+## Uncomment if you want to use graphite datasource for zuul
+  zuul-metrics:
+    - name: graphite
+      type: graphite
+      access: proxy
+      url: http://graphite:8080
+      jsonData:
+        graphiteVersion: "1.1"
+  cluster-logs: null
+loki:
+  enabled: false
+promtail:
+  enabled: false
+
+kube-prometheus-stack:
+  grafana:
+#    service:
+#      type: NodePort
+#      nodePort: 30000
+## Grafana admin password override (defaults to `pass`)
+    adminPassword: "<replace-me>"
+## Uncomment if you want to expose UI (Grafana) via HTTPS endpoint `monitoring.scs.community`
+## see and apply let's encrypt issuer defined in `scs/issuer.yaml`
+    ingress:
+      enabled: true
+      annotations:
+        cert-manager.io/issuer: "letsencrypt-issuer"
+      ingressClassName: nginx
+      hosts:
+      - monitoring.scs.community
+      tls:
+      - secretName: monitoring-grafana-tls
+        hosts:
+        - monitoring.scs.community
+## Uncomment if you want to allow anonymous access to the UI (Grafana)
+    env:
+      GF_AUTH_ANONYMOUS_ENABLED: true
+## Uncomment if you want to apply a custom SCS branding
+    extraConfigmapMounts:
+      - name: scs-logo
+        mountPath: /usr/share/grafana/public/img/scs_logo.svg
+        subPath: scs_logo.svg
+        configMap: scs-logo
+      - name: dnation-home
+        mountPath: /usr/share/grafana/public/dashboards/home.json
+        subPath: home.json
+        configMap: dnation-home
+    extraSecretMounts:
+      - name: scs-brand
+        mountPath: /etc/secrets
+        secretName: scs-brand
+        defaultMode: 0755
+  kubeScheduler:
+    serviceMonitor:
+      # TODO fix this:
+      insecureSkipVerify: true
+  kubeControllerManager:
+    serviceMonitor:
+      # TODO fix this:
+      insecureSkipVerify: true
+  prometheus:
+    prometheusSpec:
+      thanos:
+        objectStorageConfig:
+          existingSecret:
+            name: thanos-objstore-config
+            key: objstore.yml
+      replicas: 2
+      replicaExternalLabelName: sidecar_replica
+      externalLabels:
+        cluster: observer-cluster
+  defaultRules:
+    labels:
+      prometheus_rule: '2'
+    disabled:
+      PrometheusNotConnectedToAlertmanagers: true
+## Uncomment if you want to deploy MVP0 version
+#  additionalPrometheusRulesMap:
+#    dnation-kubernetes-monitoring-rules:
+#      additionalLabels:
+#        prometheus_rule: '2'
+#      groups:
+#      - name: k8s.rules
+#        rules:
+#        - alert: KubernetesMonitoringClusterDown
+#          expr: 'kaas unless on(cluster) up'
+#          labels:
+#            alertgroup: Cluster
+#            severity: critical
+#          annotations:
+#            message: 'Cluster {{ $labels.cluster }} is down.'
+  nameOverride: kube-prometheus
+  alertmanager:
+#    service:
+#      type: NodePort
+#      nodePort: 30001
+## Uncomment if you want to expose Alertmanager UI via HTTPS endpoint `monitoring.scs.community/alertmanager`
+## TLS is defined via grafana ingress and for oauth see oauth/README.md
+    ingress:
+      enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+        nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+      ingressClassName: nginx
+      hosts:
+      - monitoring.scs.community
+      paths:
+      - /alertmanager
+## Uncomment if you want to forward alerts into matrix chat
+## See also docs in matrix-alertmanager/README.md
+    alertmanagerSpec:
+      routePrefix: /alertmanager # Uncomment if you want run alertmanager on different path than /, e.g. /alertmanager
+      externalUrl: https://monitoring.scs.community
+    config:
+      route:
+        receiver: 'matrix-notifications'
+        group_by: ['alertname', 'job', 'severity']
+        repeat_interval: 24h
+        routes:
+        - receiver: 'null'
+          match:
+            alertname: Watchdog
+      receivers:
+      - name: 'null'
+      - name: 'matrix-notifications'
+        webhook_configs:
+        - url: "http://matrix-alertmanager-receiver:3000/alerts/alert-room"
+  thanosRuler:
+    enabled: true
+    service:
+      additionalPorts:
+      - name: grpc
+        port: 10901
+        protocol: TCP
+        targetPort: 10901
+    thanosRulerSpec:
+      objectStorageConfig:
+        existingSecret:
+          name: thanos-objstore-config
+          key: objstore.yml
+      evaluationInterval: "1m"
+      ruleSelector:
+        matchLabels:
+          prometheus_rule: '2'
+      queryEndpoints:
+#      - dnssrv+_http._tcp.thanos-query
+## Replace if thanos query runs on different path than /
+      - http://thanos-query:9090/thanos
+      alertmanagersUrl:
+#      - http://kube-prometheus-alertmanager:9093
+## Replace if alertmanager runs on different path than /
+      - http://kube-prometheus-alertmanager:9093/alertmanager
+
+dnation-kubernetes-monitoring:
+  grafanaDashboards:
+    isLoki: false
+  prometheusRules:
+    labelPrometheus:
+      prometheus_rule: '2'
+## Uncomment when you want to fire dNation alerts immediately
+#    alertInterval: "0m"
+
+  clusterMonitoring:
+    clusters:
+    - name: Observer
+      label: observer-cluster
+      description: 'Observer cluster monitoring'
+## Uncomment when you want to observe also Harbor cluster
+    - name: Harbor
+      description: 'Harbor cluster monitoring'
+      label: harbor-cluster
+      apps:
+      - name: harbor
+        description: Harbor
+        jobName: harbor
+        templates:
+          harbor:
+            enabled: true
+
+## Uncomment only when Observer and Harbor management VMs have been bootstrap with node and cadvisor exporters
+  hostMonitoring:
+    enabled: true
+    hosts:
+    - name: observer-mgmt
+      description: Observer management VM
+      jobName: observer-mgmt
+      host:
+        address: 213.131.230.206
+      serviceMonitor:
+        endpoints:
+        - port: "9100"
+          interval: 30s
+          path: /metrics
+      apps:
+      - name: observer-mgmt-docker
+        description: Observer management Docker containers
+        jobName: observer-mgmt-docker
+        templates:
+          cAdvisor:
+            enabled: true
+        serviceMonitor:
+          endpoints:
+          - port: "9180"
+            interval: 30s
+            path: /metrics
+    - name: harbor-mgmt
+      description: Harbor management VM
+      jobName: harbor-mgmt
+      host:
+        address: 213.131.230.72
+      serviceMonitor:
+        endpoints:
+        - port: "9100"
+          interval: 30s
+          path: /metrics
+      apps:
+      - name: harbor-mgmt-docker
+        description: Harbor management Docker containers
+        jobName: harbor-mgmt-docker
+        templates:
+          cAdvisor:
+            enabled: true
+        serviceMonitor:
+          endpoints:
+          - port: "9180"
+            interval: 30s
+            path: /metrics
+## Uncomment only when SCS Zuul VM has been bootstrap with node and cadvisor exporters
+    - name: zuul
+      description: SCS Zuul VM
+      jobName: zuul-scs
+      host:
+        address: 213.131.230.42
+      serviceMonitor:
+        endpoints:
+        - port: "9100"
+          interval: 30s
+          path: /metrics
+      apps:
+      - name: zuul-docker
+        description: SCS Zuul Docker containers
+        jobName: zuul-scs-docker
+        templates:
+          cAdvisor:
+            enabled: true
+        serviceMonitor:
+          endpoints:
+          - port: "9180"
+            interval: 30s
+            path: /metrics
+## Zuul zookeeper panel
+      - name: zookeeper
+        description: SCS Zuul Zookeeper
+        jobName: zuul-zookeeper
+        templates:
+          zuulZookeeper:
+            enabled: true
+        serviceMonitor:
+          endpoints:
+          - port: "7000"
+            interval: 30s
+            path: /metrics
+## Zuul statsd panels
+      - name: status-statsd
+        description: SCS Zuul Status
+        jobName: zuulStatus
+        templates:
+          zuulStatus:
+            enabled: true
+      - name: nodepool-statsd
+        description: SCS Zuul Nodepool
+        jobName: zuulNodepool
+        templates:
+          zuulNodepool:
+            enabled: true
+
+  templates:
+    L1:
+      hostApps:
+        zuulStatus:
+          default: false
+          panel:
+            dataLinks: [{ title: 'Detail', url: '/d/zuulstatus' }]
+            expr: 'vector(-1)'
+            mappings: [{ "type": "value", "options": { "-1": { "text": "Status" }}}]
+            thresholds: { "value": -1, "color": "transparent" }
+            gridPos:
+              w: 4
+        zuulNodepool:
+          default: false
+          panel:
+            dataLinks: [{ title: 'Detail', url: '/d/zuulnodepool' }]
+            expr: 'vector(-1)'
+            mappings: [{ "type": "value", "options": { "-1": { "text": "Nodepool" }}}]
+            thresholds: { "value": -1, "color": "transparent" }
+            gridPos:
+              w: 4
+        zuulZookeeper:
+          default: false
+          panel:
+            dataLinks: [{ title: 'Detail', url: '/d/zuulzookeeper?var-job=zuul-zookeeper&refresh=10s&var-DS_PROMETHEUS=$datasource&from=$__from&to=$__to' }]
+            expr: '(sum(up{cluster=\"$cluster\", job=~\"zuul-zookeeper\"}) / count(up{cluster=\"$cluster\", job=~\"zuul-zookeeper\"}))*100 OR on() vector(-1)'
+            mappings: [{ "type": "value", "options": { "-1": { "text": "-" }}}]
+            thresholds:
+              operator: '<'
+              lowest: 0
+              warning: 95
+              critical: 99
+            gridPos:
+              w: 4
+
+  kaasMonitoring:
+    ## Enable kaasMonitoring if you want to deploy MVP0 version
+    enabled: false
+
+  testbedMonitoring:
+    ## Enable testbedMonitoring if you want to deploy MVP0 version
+    enabled: false
+
+## Uncomment if you want to monitor SCS infrastructure services
+  blackboxMonitoring:
+    enabled: true
+prometheus-blackbox-exporter:
+  enabled: true
+  prometheusRule:
+    additionalLabels:
+      prometheus_rule: '2'
+  serviceMonitor:
+    targets:
+    - name: scs-registry
+      url: https://registry.scs.community/account/sign-in
+    - name: scs-jitsi
+      url: https://conf.scs.koeln:8443/
+    - name: scs-hedgedoc
+      url: https://input.scs.community/
+    - name: scs-nextcloud
+      url: https://scs.sovereignit.de/nextcloud/login
+    - name: scs-web
+      url: https://scs.community/
+    - name: scs-docs
+      url: https://docs.scs.community/
+    - name: scs-zuul
+      url: https://zuul.scs.community
