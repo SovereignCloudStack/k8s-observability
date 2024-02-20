@@ -20,7 +20,7 @@ The high-level architecture could be visualized as follows:
 ![monitoring_scs_high_level.png](./images/monitoring_scs_high_level.png)
 
 Some illustrative and experimental examples of how this monitoring solution can be utilized have been introduced
-within the MVP-0 version of this project (refer to the MVP-0 tag, related comments, and docs sections: [kaas](./kaas.md), [iaas](./iaas.md)).
+within the MVP-0 version of this project (refer to the `mvp-0` tag, related comments, and docs sections: [kaas](./kaas.md), [iaas](./iaas.md)).
 These examples include:
 - Monitoring of the KaaS layer
 - Monitoring of the IaaS layer

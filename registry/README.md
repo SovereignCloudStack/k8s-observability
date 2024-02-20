@@ -33,5 +33,5 @@ dnation-kubernetes-monitoring-stack deployment.
 
 ```bash
 helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack \
-  -f ../values-observer.yaml
+  -f ../values-observer-scs.yaml
 ```

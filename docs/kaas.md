@@ -3,6 +3,15 @@
 This component is marked as experimental, and it is not part of the reference SCS installation available
 at https://monitoring.scs.community.
 
+## Enable KaaS layer monitoring
+
+TODO: Provide clear instructions on how to enable KaaS layer monitoring.
+
+Please check out the `mvp-0` tag and find the related comments on what needs to be done in the monitoring
+values to enable KaaS monitoring in your Observer cluster.
+
+## KaaS metric importer
+
 To test the Monitoring of the KaaS layer use case, deploy the Kaas-metric-importer
 into the Observer cluster.
 
@@ -12,7 +21,7 @@ This functionality enables the Observer monitoring to differentiate between KaaS
 and those that have stopped writing metrics to the Observer monitoring for any reason.
 
 ```bash
-kubectl apply -f ../kaas-metric-importer.yaml
+kubectl apply -f kaas/kaas-metric-importer.yaml
 ```
 
 The Kaas-metric-importer uses an image built from https://github.com/m3dbx/prometheus_remote_client_golang.
