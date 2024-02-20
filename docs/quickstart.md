@@ -36,7 +36,7 @@ helm repo update dnationcloud
 helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f values-observer.yaml
 ```
 
-## Access Observer monitoring Grafana UI
+## Access the Observer monitoring UIs
 
 At this point, you should have the ability to access the Grafana, Alertmanager and Thanos UIs
 within the Observer monitoring cluster.
