@@ -12,7 +12,7 @@ Currently, the detailed architecture diagram can be visualized as follows:
 ## Prerequisites
 
 - Kubernetes cluster
-  - We used the R5 version of SCS KaaS V1, which includes an ingress controller and cert manager
+  - We used the R5 version of [SCS KaaS V1](https://github.com/SovereignCloudStack/k8s-cluster-api-provider/), which includes an ingress controller and cert manager
     ```bash
     export KUBECONFIG=/path/to/kubeconfig
     ```

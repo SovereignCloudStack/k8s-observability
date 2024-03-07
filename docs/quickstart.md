@@ -14,17 +14,25 @@ be installed and will monitor the Kubernetes cluster hosting it.
 
 ## Prerequisites
 
-- [kind](https://kind.sigs.k8s.io/)
+- Kubernetes cluster
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/)
 - [helm](https://helm.sh/)
 
 ## Prepare Kubernetes cluster
 
+The Observer monitoring solution is designed to operate on Kubernetes clusters. We have continuously tested it with
+various Kubernetes distributions, including vanilla Kubernetes, OKD, [SCS KaaS V1](https://github.com/SovereignCloudStack/k8s-cluster-api-provider/),
+and [SCS KaaS V2](https://github.com/SovereignCloudStack/cluster-stacks).
+
+To set up the SCS KaaS V2 Kubernetes cluster, please refer to the [quickstart guide](https://github.com/SovereignCloudStack/cluster-stacks/blob/feat/r6-docs/docs/quickstart.md).
+
+For local testing purposes, we recommend using [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/) (Kubernetes in Docker) as follows:
+
 ```bash
 kind create cluster --config kind-observer-config.yaml --image kindest/node:v1.27.3 --name observer
 ```
 
-If you opt not to use KinD and prefer utilizing an existing Kubernetes cluster,
+If you opt not to use KinD with the custom config we provided here, and prefer utilizing another Kubernetes cluster,
 ensure that the metric endpoints for various control plane components are properly exposed.
 Refer to the [docs](https://dnationcloud.github.io/kubernetes-monitoring/helpers/FAQ/#kubernetes-monitoring-shows-or-0-state-for-some-control-plane-components-are-control-plane-components-working-correctly).
 
