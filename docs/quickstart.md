@@ -57,6 +57,9 @@ within the Observer monitoring cluster.
     - username: `admin`
     - password: `pass`
 
+  - Visit the Layer 0 dashboard, `infrastructure-services-monitoring`, and drill down to explore cluster metrics
+    - http://localhost:30000/d/monitoring/infrastructure-services-monitoring
+
 - Alertmanager UI
   ```bash
   http://localhost:30001
