@@ -6,6 +6,8 @@ promtail:
 dnation-kubernetes-monitoring:
   grafanaDashboards:
     isLoki: false
+grafanaDatasourcesAsConfigMap:
+  cluster-logs: null
 
 # Expose UIs
 kube-prometheus-stack:
