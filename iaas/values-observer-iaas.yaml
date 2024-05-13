@@ -1,0 +1,32 @@
+kube-prometheus-stack:
+  prometheus:
+   prometheusSpec:
+     serviceMonitorSelector:
+      # Match all dNation monitoring ServiceMonitors via the default match label setting `release=.Release.Name` OR
+      # mach the OpenStack exporter ServiceMonitor
+       matchExpressions:
+         - key: release
+           operator: In
+           values:
+             - "{{ .Release.Name }}"
+             - prometheus-openstack-exporter
+  grafana:
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+        - name: iaas
+          folder: 'IaaS'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/iaas
+    dashboards:
+       iaas:
+         openstack-exporter:
+           gnetId: 21085
+           revision: 3
+           datasource:
+           - name: DS_PROMETHEUS
+             value: thanos
