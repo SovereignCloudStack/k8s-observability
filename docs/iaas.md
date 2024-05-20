@@ -43,13 +43,13 @@ osism apply kubernetes-monitoring
 ### OpenStack exporter
 
 The [OpenStack exporter for Prometheus](https://github.com/openstack-exporter) could be deployed using the SCS [openstack-exporter-helm-chart](https://github.com/SovereignCloudStack/openstack-exporter-helm-charts).
-Visit the `openstack-exporter-values.yaml` file to validate the Helm configuration options.
+Visit the `iaas/openstack-exporter-values.yaml` file to validate the Helm configuration options.
 Ensure valid OpenStack API credentials are set under the `clouds_yaml_config` section. This MUST be overridden!
 
 ```bash
 helm upgrade --install prometheus-openstack-exporter oci://registry.scs.community/openstack-exporter/prometheus-openstack-exporter \
   --version 0.4.5 \
-  -f openstack-exporter-values.yaml
+  -f iaas/openstack-exporter-values.yaml # --set "endpoint_type=public"
 ```
 
 Tip: If you want to test the exporter basic functionality with **public** OpenStack API, configure `endpoint_type`
@@ -60,7 +60,7 @@ incomplete functionality for the Grafana dashboard.
 
 The Grafana dashboard designed to visualize metrics collected from an OpenStack cloud through the OpenStack exporter
 is publicly available at https://grafana.com/grafana/dashboards/21085. Its source code is located in the
-`dashboards` directory. Feel free to import it to the Grafana via its source or ID.
+`iaas/dashboards` directory. Feel free to import it to the Grafana via its source or ID.
 For automatic integration into the SCS monitoring solution proceed to the next step.
 
 ### Deploy OpenStack exporter Grafana dashboard and instruct monitoring stack to register the OpenStack exporter
@@ -69,5 +69,5 @@ Deploy OpenStack exporter Grafana dashboard via its ID and instruct monitoring s
 ServiceMonitor via its label as follows:
 
 ```bash
-helm upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack --reset-then-reuse-values -f values-observer-iaas.yaml
+helm upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack --reset-then-reuse-values -f iaas/values-observer-iaas.yaml
 ```
