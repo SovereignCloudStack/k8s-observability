@@ -49,12 +49,16 @@ Ensure valid OpenStack API credentials are set under the `clouds_yaml_config` se
 ```bash
 helm upgrade --install prometheus-openstack-exporter oci://registry.scs.community/openstack-exporter/prometheus-openstack-exporter \
   --version 0.4.5 \
-  -f iaas/openstack-exporter-values.yaml # --set "endpoint_type=public"
+  -f iaas/openstack-exporter-values.yaml # --set "endpoint_type=public" --set "serviceMonitor.scrapeTimeout=1m"
 ```
 
 Tip: If you want to test the exporter basic functionality with **public** OpenStack API, configure `endpoint_type`
 to `public` (`--set "endpoint_type=public"`). Note that configuring `endpoint_type` as `public` will result in
 incomplete functionality for the Grafana dashboard.
+
+Tip: Requesting and collecting metrics from the OpenStack API can be time-consuming, especially if the API is not
+performing well. In such cases, you may observe timeouts on the Prometheus server when it tries to fetch OpenStack
+metrics. To mitigate this, consider increasing the scrape interval to e.g. 1 minute (`--set "serviceMonitor.scrapeTimeout=1m"`).
 
 ### OpenStack exporter Grafana dashboard
 
@@ -71,3 +75,26 @@ ServiceMonitor via its label as follows:
 ```bash
 helm upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack --reset-then-reuse-values -f iaas/values-observer-iaas.yaml
 ```
+
+Note: The `--reset-then-reuse-values` option requires Helm v3.14.0 or later. Alternatively, you can use the original values
+by applying `-f values-observer.yaml`, see full command:
+```bash
+helm upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f values-observer.yaml -f iaas/values-observer-iaas.yaml
+```
+
+### Access the OpenStack dashboard
+
+At this point, you should have the ability to access the Grafana UI, and OpenStack dashboard.
+
+Log in to the Grafana UI and find the OpenStack dashboard in IaaS directory:
+```bash
+http://localhost:30000
+```
+or directly access the OpenStack dashboard:
+```bash
+http://localhost:30000/d/openstack-overview
+```
+
+- Use the following credentials:
+  - username: `admin`
+  - password: `pass`
