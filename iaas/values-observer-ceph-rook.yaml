@@ -27,7 +27,7 @@ kube-prometheus-stack:
             interval: 10s
   grafana:
     dashboardProviders:
-      dashboardproviders.yaml:
+      dashboardprovidersceph.yaml:
         apiVersion: 1
         providers:
         - name: ceph

@@ -12,7 +12,7 @@ kube-prometheus-stack:
               - <REPLACE_ME>
   grafana:
     dashboardProviders:
-      dashboardproviders.yaml:
+      dashboardprovidersceph.yaml:
         apiVersion: 1
         providers:
         - name: ceph
