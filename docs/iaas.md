@@ -135,7 +135,7 @@ ceph-ansible or ceph-rook deployment ([yq](https://github.com/mikefarah/yq/#inst
 ```bash
 # ceph-ansible
 curl -s https://raw.githubusercontent.com/ceph/ceph/main/monitoring/ceph-mixin/prometheus_alerts.yml | \
-  yq '{"kube-prometheus-stack": {"additionalPrometheusRulesMap": {"ceph-rook-rules": (. + {"additionalLabels": {"prometheus_rule": "1"}})}}}' > iaas/values-observer-ceph-rules.yaml
+  yq '{"kube-prometheus-stack": {"additionalPrometheusRulesMap": {"ceph-ansible-rules": (. + {"additionalLabels": {"prometheus_rule": "1"}})}}}' > iaas/values-observer-ceph-rules.yaml
 
 # rook
 curl -s https://raw.githubusercontent.com/rook/rook/master/deploy/charts/rook-ceph-cluster/prometheus/localrules.yaml | \
@@ -156,7 +156,7 @@ or `values-observer-ceph-ansible.yaml` file. You can use both.
 #### Update the SCS monitoring deployment
 
 This step deploys Grafana dashboards, Prometheus rules and instruct monitoring stack to add the Ceph exporter targets into the Prometheus configuration.
-Ensure that you add the monitoring targets' IPs and ports to `values-observer-ceph-ansible.yaml` for Ceph-ansible deployments/
+Ensure that you add the monitoring targets' IPs and ports to `values-observer-ceph-ansible.yaml` for Ceph-ansible deployment.
 
 ```bash
 helm upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack --reset-then-reuse-values \
