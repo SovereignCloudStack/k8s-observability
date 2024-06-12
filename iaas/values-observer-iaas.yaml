@@ -12,7 +12,7 @@ kube-prometheus-stack:
           - prometheus-openstack-exporter
   grafana:
     dashboardProviders:
-      dashboardproviders.yaml:
+      dashboardprovidersiaas.yaml:
         apiVersion: 1
         providers:
         - name: iaas
