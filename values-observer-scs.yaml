@@ -167,6 +167,10 @@ loki:
         s3ForcePathStyle: true
         accessKeyId: <replace-me>
         secretAccessKey: <replace-me>
+    limits_config:
+      retention_period: 0  # infinite retention
+    compactor:
+      retention_enabled: false # infinite retention
   gateway:
     ingress:
       enabled: true
