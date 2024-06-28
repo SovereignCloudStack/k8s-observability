@@ -9,6 +9,10 @@ Currently, the detailed architecture diagram can be visualized as follows:
 
 ![monitoring_scs_detailed.png](./images/monitoring_scs_detailed.png)
 
+The SCS Observer includes the [Loki](https://grafana.com/oss/loki/) deployment along with the [Promtail](https://grafana.com/docs/loki/latest/send-data/promtail/)
+agent on each Observer node. This setup ensures that the SCS Observer platform collects logs from itself and can also
+serve as a global, horizontally scalable, highly available, multi-tenant log aggregation system.
+
 ## Prerequisites
 
 - Kubernetes cluster
@@ -35,7 +39,8 @@ Currently, the detailed architecture diagram can be visualized as follows:
 - Deploy the OAUTH related manifest according to the instructions provided on [this](./oauth.md) documentation page.
 
 - Review the `values-observer-scs.yaml` file and locate all instances of the placeholder text "replace-me".
-  These values relate to configuring access to the object store as well as the Grafana admin password.
+  These values relate to configuring access to the object stores (for Thanos and Loki), the Grafana admin password and
+  Loki API basic auth username and password.
 
 - Finally, install the monitoring stack using values that incorporate all the configurations mentioned above
 ```bash
