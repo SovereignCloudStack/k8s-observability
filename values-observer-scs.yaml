@@ -127,11 +127,63 @@ grafanaDatasourcesAsConfigMap:
       url: http://graphite:8080
       jsonData:
         graphiteVersion: "1.1"
-  cluster-logs: null
-loki:
-  enabled: false
+  cluster-logs:
+    - name: cluster-logs
+      isDefault: false
+      type: loki
+      url: http://loki-gateway
+      jsonData:
+        httpHeaderName1: 'X-Scope-OrgID'
+      secureJsonData:
+        httpHeaderValue1: '1'
+
+extraSecrets:
+- name: loki-basic-auth
+  data:
+    # ! Regenerate the htpasswd, see below example
+    #   user: loki-api, pass: replaceme
+    auth: loki-api:$apr1$W.wVTHpx$VmCc3ufyEISd0a2UZrpZh0  # replaceme
+
 promtail:
-  enabled: false
+  enabled: true
+  config:
+    clients:
+    - url: http://loki-gateway/loki/api/v1/push
+      tenant_id: 1
+
+loki:
+  enabled: true
+  auth_enabled: true
+  fullnameOverride: loki
+  minio:
+    enabled: false
+  loki:
+    storage:
+      bucketNames:
+        chunks: monitoring-loki-chunks  # an example bucket name for chunks
+        ruler: monitoring-loki-ruler  # an example bucket name for rules
+      s3:
+        endpoint: https://api.gx-scs.sovereignit.cloud:8080
+        s3ForcePathStyle: true
+        accessKeyId: <replace-me>
+        secretAccessKey: <replace-me>
+  gateway:
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/auth-type: basic
+        nginx.ingress.kubernetes.io/auth-secret: loki-basic-auth
+        nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+      hosts:
+        ## TLS is defined via grafana ingress
+        - host: monitoring.scs.community
+          paths:
+            - path: /loki
+              pathType: Prefix
+
 
 kube-prometheus-stack:
   grafana:
@@ -273,8 +325,6 @@ kube-prometheus-stack:
       - http://kube-prometheus-alertmanager:9093/alertmanager
 
 dnation-kubernetes-monitoring:
-  grafanaDashboards:
-    isLoki: false
   prometheusRules:
     labelPrometheus:
       prometheus_rule: '2'
