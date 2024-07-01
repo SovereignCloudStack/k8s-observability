@@ -28,13 +28,15 @@ thanos:
 #        http: 30002
     stores:
       - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
-## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+## FIXME: Thanos query in Harbor and Moin cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
 ##   Thanos query should be exposed via ingress and then the store address below should be used.
 ##      - dnssrv+_http-harbor-cluster._tcp.thanos-query-envoy
 ## Uncomment this if you want to observe Harbor cluster via node port
       - 213.131.230.86:31050
-## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
-##   Thanos query in Harbor cluster should be exposed via ingress and then the section below should be used.
+## Uncomment this if you want to observe Moin cluster via node port
+      - 213.131.230.199:31050
+## FIXME: Thanos query in Harbor and Moin cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+##   Thanos query in Harbor and Moin cluster should be exposed via ingress and then the section below should be used.
 #    sidecars:
 #      - name: envoy-sidecar
 #        image: 'envoyproxy/envoy:v1.21.6'
@@ -90,7 +92,7 @@ thanos:
         remote: 30291
     tsdbRetention: 1d
 
-## FIXME: Thanos query in Harbor cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
+## FIXME: Thanos query in Harbor and Moin cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
 ##   Thanos query in Harbor cluster should be exposed via ingress and then the section below should be used.
 #thanosQueryEnvoySidecar:
 #  enabled: true
@@ -99,6 +101,14 @@ thanos:
 #    name: harbor-cluster
 #    queryPort: 443
 #    queryUrl: query-harbor.dnation.cloud
+#    tls:
+#      certificate_chain: /certs/tls.crt
+#      private_key: /certs/tls.key
+#      trusted_ca: /certs/ca.crt
+#  - listenPort: 10001
+#    name: moin-cluster
+#    queryPort: 443
+#    queryUrl: query-moin.dnation.cloud
 #    tls:
 #      certificate_chain: /certs/tls.crt
 #      private_key: /certs/tls.key
