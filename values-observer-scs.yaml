@@ -29,8 +29,9 @@ thanos:
     stores:
       - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
 ## FIXME: Thanos query in Harbor and Moin cluster is temporary exposed via (unsecure) NodePort, see https://github.com/SovereignCloudStack/k8s-observability/issues/32
-##   Thanos query should be exposed via ingress and then the store address below should be used.
+##   Thanos query should be exposed via ingress and then the store addresses below should be used.
 ##      - dnssrv+_http-harbor-cluster._tcp.thanos-query-envoy
+##      - dnssrv+_http-moin-cluster._tcp.thanos-query-envoy
 ## Uncomment this if you want to observe Harbor cluster via node port
       - 213.131.230.86:31050
 ## Uncomment this if you want to observe Moin cluster via node port
@@ -46,6 +47,9 @@ thanos:
 #        ports:
 #        - name: egress-http-1
 #          containerPort: 10000
+#          protocol: TCP
+#        - name: egress-http-2
+#          containerPort: 10001
 #          protocol: TCP
 #        volumeMounts:
 #        - name: envoy-config
@@ -362,6 +366,9 @@ dnation-kubernetes-monitoring:
         templates:
           harbor:
             enabled: true
+    - name: Moin
+      description: 'Moin cluster monitoring'
+      label: moin-cluster
 
 ## Uncomment only when Observer and Harbor management VMs have been bootstrap with node and cadvisor exporters
   hostMonitoring:
