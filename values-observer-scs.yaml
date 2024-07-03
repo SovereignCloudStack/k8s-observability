@@ -212,6 +212,7 @@ kube-prometheus-stack:
 ## Uncomment if you want to allow anonymous access to the UI (Grafana)
     env:
       GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_USERS_VIEWERS_CAN_EDIT: true
 ## Uncomment if you want to apply a custom SCS branding
     extraConfigmapMounts:
       - name: scs-logo
