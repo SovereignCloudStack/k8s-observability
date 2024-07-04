@@ -223,6 +223,9 @@ kube-prometheus-stack:
       - secretName: monitoring-grafana-tls
         hosts:
         - monitoring.scs.community
+    grafana.ini:
+      server:
+        root_url: https://%(domain)s/
 ## Uncomment if you want to allow anonymous access to the UI (Grafana)
     env:
       GF_AUTH_ANONYMOUS_ENABLED: true
