@@ -66,7 +66,74 @@ dnation-kubernetes-monitoring:
             path: /metrics
             relabelings:
             - *containerLabel
-
+      - name: status-page-api
+        description: Status Page Api
+        jobName: status-page-api
+        serviceMonitor:
+          jobLabel: app
+          namespaceSelector:
+            matchNames:
+              - status-page
+          selector:
+            matchLabels:
+              app: status-page-api
+          endpoints:
+            - port: metrics
+              interval: 30s
+              path: /metrics
+              relabelings:
+                - *containerLabel
+      - name: status-page-database
+        description: Status Page Database
+        jobName: status-page-database
+        serviceMonitor:
+          jobLabel: app
+          namespaceSelector:
+            matchNames:
+              - status-page
+          selector:
+            matchLabels:
+              app: status-page-api-db
+          endpoints:
+            - port: metrics
+              interval: 30s
+              path: /metrics
+              relabelings:
+                - *containerLabel
+      - name: status-page-dex
+        description: Status Page Dex
+        jobName: status-page-dex
+        serviceMonitor:
+          jobLabel: app
+          namespaceSelector:
+            matchNames:
+              - status-page
+          selector:
+            matchLabels:
+              app: status-page-dex
+          endpoints:
+            - port: telemetry
+              interval: 30s
+              path: /metrics
+              relabelings:
+                - *containerLabel
+      - name: status-page-oathkeeper
+        description: Status Page Oathkeeper
+        jobName: status-page-oathkeeper
+        serviceMonitor:
+          jobLabel: app
+          namespaceSelector:
+            matchNames:
+              - status-page
+          selector:
+            matchLabels:
+              app: status-page-oathkeeper
+          endpoints:
+            - port: metrics
+              interval: 30s
+              path: /metrics
+              relabelings:
+                - *containerLabel
 loki:
   enabled: false
 promtail:

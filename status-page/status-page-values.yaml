@@ -1,0 +1,79 @@
+kube-prometheus-stack:
+  prometheus:
+    additionalServiceMonitors:
+      - name: status-page-api
+        selector:
+          matchLabels:
+            app: status-page-api
+        namespaceSelector:
+          matchNames:
+            - status-page
+        endpoints:
+          - port: metrics
+            path: /metrics
+            interval: 10s
+      - name: status-page-database
+        selector:
+          matchLabels:
+            app: status-page-api-db
+        namespaceSelector:
+          matchNames:
+            - status-page
+        endpoints:
+          - port: metrics
+            path: /metrics
+            interval: 10s
+      - name: status-page-dex
+        selector:
+          matchLabels:
+            app: status-page-dex
+        namespaceSelector:
+          matchNames:
+            - status-page
+        endpoints:
+          - port: telemetry
+            path: /metrics
+            interval: 10s
+      - name: status-page-oathkeeper
+        selector:
+          matchLabels:
+            app: status-page-oathkeeper
+        namespaceSelector:
+          matchNames:
+            - status-page
+        endpoints:
+          - port: metrics
+            path: /metrics
+            interval: 10s
+  grafana:
+    dashboardProviders:
+      dashboardprovidersstatuspage.yaml:
+        apiVersion: 1
+        providers:
+        - name: status-page
+          folder: 'StatusPage'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/status-page
+    dashboards:
+      status-page:
+        status-page-database:
+          gnetId: 13115
+          revision: 1
+          datasource:
+            - name: DS_PROMETHEUS
+              value: thanos
+        status-page-go:
+          gnetId: 10826
+          revision: 1
+          datasource:
+            - name: DS_PROMETHEUS
+              value: thanos
+        status-page-api:
+            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/17a247819dba1f1150889616ba3931b904f9419b/kubernetes/environments/kind/monitoring/grafana/dashboards/API-1718710757996.json
+        status-page-dex:
+            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/17a247819dba1f1150889616ba3931b904f9419b/kubernetes/environments/kind/monitoring/grafana/dashboards/Dex-1718271569643.json
+        status-page-oathkeeper:
+            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/17a247819dba1f1150889616ba3931b904f9419b/kubernetes/environments/kind/monitoring/grafana/dashboards/Oathkeeper-1718203458929.json
