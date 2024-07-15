@@ -72,8 +72,8 @@ kube-prometheus-stack:
             - name: DS_PROMETHEUS
               value: thanos
         status-page-api:
-            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/17a247819dba1f1150889616ba3931b904f9419b/kubernetes/environments/kind/monitoring/grafana/dashboards/API-1718710757996.json
+            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/main/kubernetes/feature/monitoring/grafana/dashboards/API-1718710757996.json
         status-page-dex:
-            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/17a247819dba1f1150889616ba3931b904f9419b/kubernetes/environments/kind/monitoring/grafana/dashboards/Dex-1718271569643.json
+            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/main/kubernetes/feature/monitoring/grafana/dashboards/Dex-1720687900405.json
         status-page-oathkeeper:
-            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/17a247819dba1f1150889616ba3931b904f9419b/kubernetes/environments/kind/monitoring/grafana/dashboards/Oathkeeper-1718203458929.json
+            url: https://raw.githubusercontent.com/SovereignCloudStack/status-page-deployment/main/kubernetes/feature/monitoring/grafana/dashboards/Oathkeeper-1720685662895.json
