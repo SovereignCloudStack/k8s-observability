@@ -16,6 +16,7 @@
    kubectl apply -f workload/server-secret.yaml
    ```
 3. Deploy *dnation-kubernetes-monitoring-stack* to the **workload** cluster:
+   - Note: Please fill the Loki credentials in the `values-workload.yaml` file under the `basic_auth` section of the Promtail config.
    - Optional: Fill `workload/thanos-objstore.yaml` with bucket credentials in **thanosStorage config**
    - Deploy
    ```bash
