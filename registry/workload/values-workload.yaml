@@ -137,7 +137,15 @@ dnation-kubernetes-monitoring:
 loki:
   enabled: false
 promtail:
-  enabled: false
+  config:
+    clients:
+    - url: "https://monitoring.scs.community/loki/api/v1/push"
+      tenant_id: 1
+      basic_auth:
+        username: <loki-username>
+        password: <loki-password>
+  extraArgs:
+  - -client.external-labels=cluster=harbor-cluster
 
 kube-prometheus-stack:
   prometheus:
