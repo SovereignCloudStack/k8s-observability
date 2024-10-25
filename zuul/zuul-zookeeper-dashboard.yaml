@@ -9166,15 +9166,7 @@ data:
             "useTags": false
           },
           {
-            "current": {
-              "selected": true,
-              "text": [
-                "213.131.230.42:7000"
-              ],
-              "value": [
-                "213.131.230.42:7000"
-              ]
-            },
+            "current": {},
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
